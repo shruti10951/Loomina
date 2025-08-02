@@ -25,3 +25,5 @@ class Thread(Document):
 
     class Settings:
         name = "threads"
+        indexes = ["userId", "creationTime", "tags", "genre"]
+

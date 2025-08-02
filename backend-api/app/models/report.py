@@ -17,3 +17,5 @@ class Report(Document):
 
     class Settings:
         name = "reports"
+        indexes = [("targetType", "targetId"), "userId"]
+

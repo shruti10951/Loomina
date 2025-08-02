@@ -29,3 +29,5 @@ class Spark(Document):
 
     class Settings:
         name = "sparks"
+        indexes = ["threadId", "userId", "previousSparkId", "creationTime"]
+

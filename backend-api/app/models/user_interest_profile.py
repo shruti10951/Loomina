@@ -12,3 +12,5 @@ class UserInterestProfile(Document):
 
     class Settings:
         name = "user_interest_profiles"
+        indexes = ["userId"]
+

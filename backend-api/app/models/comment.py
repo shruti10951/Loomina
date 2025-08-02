@@ -22,3 +22,5 @@ class Comment(Document):
 
     class Settings:
         name = "comments"
+        indexes = [("parentType", "parentId"), "userId", "creationTime"]
+

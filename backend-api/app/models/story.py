@@ -28,3 +28,5 @@ class Story(Document):
 
     class Settings:
         name = "stories"
+        indexes = ["userId", "creationTime", "genre", "tags"]
+

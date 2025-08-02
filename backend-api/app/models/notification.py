@@ -21,3 +21,5 @@ class Notification(Document):
 
     class Settings:
         name = "notifications"
+        indexes = [("userId", "seenAt"), ("targetType", "targetId")]
+

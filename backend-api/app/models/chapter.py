@@ -28,3 +28,6 @@ class Chapter(Document):
 
     class Settings:
         name = "chapters"
+        indexes = ["storyId", "userId", "sequenceNumber", "creationTime"]
+
+
