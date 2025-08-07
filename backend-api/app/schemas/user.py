@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, HttpUrl
+from pydantic import BaseModel, EmailStr, HttpUrl, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -28,7 +28,7 @@ class UpdateUserSchema(BaseModel):
 
 # For returning user data in responses (excluding sensitive fields)
 class UserResponseSchema(BaseModel):
-    id: str
+    id: str = Field(..., alias="_id")
     username: str
     email: EmailStr
     bio: Optional[str]
@@ -40,6 +40,7 @@ class UserResponseSchema(BaseModel):
     creationTime: datetime
 
     class Config:
+        populate_by_name = True  # Allows using 'id' instead of '_id'
         orm_mode = True  # allows conversion from Beanie/Mongo documents
 
 

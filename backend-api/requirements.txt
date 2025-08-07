@@ -2,5 +2,9 @@ fastapi
 uvicorn[standard]
 beanie
 motor
-pydantic
+pydantic[email]
 python-dotenv
+passlib
+python-jose
+pydantic-settings
+bcrypt
