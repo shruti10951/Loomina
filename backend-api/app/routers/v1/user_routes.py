@@ -7,6 +7,8 @@ from app.schemas.user import (
     UserResponseSchema,
     MinimalUserSchema,
 )
+from pydantic import HttpUrl
+
 from app.utils.hashing import hash_password
 from typing import List
 
@@ -25,14 +27,18 @@ async def register_user(user_data: CreateUserSchema):
     existing_user = await User.find_one(User.username == user_data.username)
     if existing_user:
         raise HTTPException(status_code=409, detail="Username already taken")
-    
+
     # Check for duplicate email
     existing_email = await User.find_one(User.email == user_data.email)
     if existing_email:
         raise HTTPException(status_code=409, detail="Email already registered")
-    
+
     # Hash the password before storing
     hashed_pwd = hash_password(user_data.password)
+
+    # Handle profile image
+    profile_image = user_data.userProfileImage or "https://images.alphacoders.com/135/1350043.png"
+
 
     # Create new user document
     user = User(
@@ -40,7 +46,7 @@ async def register_user(user_data: CreateUserSchema):
         email=user_data.email,
         password=hashed_pwd,
         bio=user_data.bio,
-        userProfileImage=user_data.userProfileImage or "https://images.alphacoders.com/135/1350043.png",
+        userProfileImage=profile_image,  
         favouriteGenres=user_data.favouriteGenres or [],
         favouriteTags=user_data.favouriteTags or [],
         followers=[],
@@ -50,10 +56,8 @@ async def register_user(user_data: CreateUserSchema):
     # Insert into MongoDB
     await user.insert()
 
-    user_dict = user.model_dump(by_alias=True)
-    user_dict["_id"] = str(user_dict["_id"])  # Convert ObjectId to str
+    return UserResponseSchema(**user.model_dump(by_alias=True))
 
-    return UserResponseSchema(**user_dict)
 
 
 # ---------------------------------------------------------
@@ -66,7 +70,7 @@ async def get_user_by_id(user_id: PydanticObjectId):
     user = await User.get(user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return UserResponseSchema(**user.model_dump(), id=str(user.id))
+    return UserResponseSchema(**user.model_dump(by_alias=True))
 
 
 # ---------------------------------------------------------
@@ -91,7 +95,8 @@ async def update_user_profile(user_id: PydanticObjectId, updates: UpdateUserSche
     # Save changes to DB
     await user.save()
 
-    return UserResponseSchema(**user.model_dump(), id=str(user.id))
+    return UserResponseSchema(**user.model_dump(by_alias=True))
+
 
 
 # ---------------------------------------------------------
@@ -104,7 +109,7 @@ async def get_user_by_username(username: str):
     user = await User.find_one(User.username == username)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    return MinimalUserSchema(**user.model_dump(), id=str(user.id))
+    return UserResponseSchema(**user.model_dump(by_alias=True))
 
 
 # ---------------------------------------------------------
@@ -122,7 +127,7 @@ async def get_user_followers(user_id: PydanticObjectId):
     followers = await User.find(User.id.in_(user.followers)).to_list()
 
     # Convert each to MinimalUserSchema
-    return [MinimalUserSchema(**f.model_dump(), id=str(f.id)) for f in followers]
+    return [MinimalUserSchema(**f.model_dump(by_alias=True)) for f in followers]
 
 
 # ---------------------------------------------------------
@@ -140,4 +145,4 @@ async def get_user_following(user_id: PydanticObjectId):
     following = await User.find(User.id.in_(user.following)).to_list()
 
     # Return minimal profile info for each
-    return [MinimalUserSchema(**f.model_dump(), id=str(f.id)) for f in following]
+    return [MinimalUserSchema(**f.model_dump(by_alias=True)) for f in following]

@@ -2,6 +2,7 @@ from pydantic import BaseModel, EmailStr, HttpUrl, Field
 from typing import Optional, List
 from datetime import datetime
 
+from app.core.object_id import PyObjectId
 
 # For creating a new user
 class CreateUserSchema(BaseModel):
@@ -10,7 +11,7 @@ class CreateUserSchema(BaseModel):
     password: str  # plaintext; hash it before saving
 
     bio: Optional[str] = ""
-    userProfileImage: Optional[HttpUrl] = None
+    userProfileImage: Optional[str] = None
     favouriteGenres: Optional[List[str]] = []
     favouriteTags: Optional[List[str]] = []
 
@@ -20,7 +21,7 @@ class CreateUserSchema(BaseModel):
 class UpdateUserSchema(BaseModel):
     username: Optional[str] = None
     bio: Optional[str] = None
-    userProfileImage: Optional[HttpUrl] = None
+    userProfileImage: Optional[str] = None
     favouriteGenres: Optional[List[str]] = None
     favouriteTags: Optional[List[str]] = None
 
@@ -28,11 +29,11 @@ class UpdateUserSchema(BaseModel):
 
 # For returning user data in responses (excluding sensitive fields)
 class UserResponseSchema(BaseModel):
-    id: str = Field(..., alias="_id")
+    id: PyObjectId = Field(..., alias="_id")
     username: str
     email: EmailStr
     bio: Optional[str]
-    userProfileImage: Optional[HttpUrl]
+    userProfileImage: Optional[str]
     favouriteGenres: List[str]
     favouriteTags: List[str]
     followers: List[str]
@@ -46,9 +47,9 @@ class UserResponseSchema(BaseModel):
 
 # For returning just username and profile image
 class MinimalUserSchema(BaseModel):
-    id: str
+    id: PyObjectId = Field(..., alias="_id")
     username: str
-    userProfileImage: Optional[HttpUrl] = None
+    userProfileImage: Optional[str] = None
 
     class Config:
         orm_mode = True

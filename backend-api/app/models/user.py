@@ -1,5 +1,5 @@
 from beanie import Document
-from pydantic import EmailStr, Field, HttpUrl
+from pydantic import EmailStr, Field
 from datetime import datetime
 from typing import List, Optional
 
@@ -8,9 +8,7 @@ class User(Document):
     email: EmailStr
     password: str  # hashed
     bio: Optional[str] = ""
-    userProfileImage: HttpUrl = (
-        "https://images.alphacoders.com/135/1350043.png"
-    )
+    userProfileImage: str 
     favouriteGenres: List[str] = []
     favouriteTags: List[str] = []
     followers: List[str] = []   # userIds
