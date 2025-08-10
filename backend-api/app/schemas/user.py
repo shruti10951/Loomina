@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr, HttpUrl, Field
+from pydantic import BaseModel, EmailStr, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -12,9 +12,8 @@ class CreateUserSchema(BaseModel):
 
     bio: Optional[str] = ""
     userProfileImage: Optional[str] = None
-    favouriteGenres: Optional[List[str]] = []
-    favouriteTags: Optional[List[str]] = []
-
+    favouriteGenres: List[str] = Field(default_factory=list)
+    favouriteTags: List[str] = Field(default_factory=list)
 
 
 # For updating user profile
@@ -26,23 +25,22 @@ class UpdateUserSchema(BaseModel):
     favouriteTags: Optional[List[str]] = None
 
 
-
 # For returning user data in responses (excluding sensitive fields)
 class UserResponseSchema(BaseModel):
     id: PyObjectId = Field(..., alias="_id")
     username: str
     email: EmailStr
-    bio: Optional[str]
-    userProfileImage: Optional[str]
-    favouriteGenres: List[str]
-    favouriteTags: List[str]
-    followers: List[str]
-    following: List[str]
+    bio: Optional[str] = None
+    userProfileImage: Optional[str] = None
+    favouriteGenres: List[str] = Field(default_factory=list)
+    favouriteTags: List[str] = Field(default_factory=list)
+    followers: List[PyObjectId] = Field(default_factory=list)
+    following: List[PyObjectId] = Field(default_factory=list)
     creationTime: datetime
 
     class Config:
-        populate_by_name = True  # Allows using 'id' instead of '_id'
-        orm_mode = True  # allows conversion from Beanie/Mongo documents
+        populate_by_name = True
+        orm_mode = True
 
 
 # For returning just username and profile image
@@ -52,4 +50,5 @@ class MinimalUserSchema(BaseModel):
     userProfileImage: Optional[str] = None
 
     class Config:
+        populate_by_name = True
         orm_mode = True
