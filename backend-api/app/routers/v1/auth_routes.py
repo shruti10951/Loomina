@@ -7,13 +7,12 @@ from app.schemas.auth import LoginSchema, TokenResponse
 from app.utils.hashing import verify_password
 from app.utils.jwt import create_access_token
 from app.core.config import settings
+from app.utils.security import get_current_user
 
 router = APIRouter()
 
 
-# -------------------------
-# 1. Form login for Swagger
-# -------------------------
+# Form login for Swagger
 @router.post("/login", response_model=TokenResponse)
 async def login_form(form_data: OAuth2PasswordRequestForm = Depends()):
     """
@@ -39,9 +38,7 @@ async def login_form(form_data: OAuth2PasswordRequestForm = Depends()):
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-# -------------------------
-# 2. JSON login for your app
-# -------------------------
+# JSON login for your app
 @router.post("/login/json", response_model=TokenResponse)
 async def login_json(payload: LoginSchema):
     """
@@ -61,3 +58,18 @@ async def login_json(payload: LoginSchema):
     )
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+
+# just aisa he rakha hai
+@router.post("/logout")
+async def logout(current_user: User = Depends(get_current_user)):
+    """
+    Logout route — client should delete the token.
+    In stateless JWT auth, server cannot truly invalidate token
+    unless you implement a token blacklist.
+    """
+    return {"message": "Successfully logged out. Please delete your token on the client side."}
+
+
+
