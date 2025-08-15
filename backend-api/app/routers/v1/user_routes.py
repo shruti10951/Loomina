@@ -1,23 +1,34 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Depends
+from datetime import timedelta
+
 from app.models.user import User
+
 from app.schemas.user import (
     CreateUserSchema,
     UpdateUserSchema,
     UserResponseSchema,
     MinimalUserSchema,
 )
+from app.schemas.auth import TokenResponse
+
 from app.core.object_id import PyObjectId
+from app.core.config import settings
+
 from app.utils.hashing import hash_password
+from app.utils.jwt import create_access_token
+from app.utils.security import get_current_user
+
 from typing import List
+
 from beanie.operators import In, Push, Pull
 
 router = APIRouter(prefix="/users", tags=["Users"])
 
-# Register a new user
-@router.post("/", response_model=UserResponseSchema, status_code=201)
+@router.post("/", response_model=TokenResponse, status_code=201)
 async def register_user(user_data: CreateUserSchema):
-    # Trim whitespace
+    # Normalize inputs
     user_data.username = user_data.username.strip()
+    user_data.email = user_data.email.strip().lower()
 
     # Validate lengths
     if len(user_data.username) > 30:
@@ -31,9 +42,13 @@ async def register_user(user_data: CreateUserSchema):
     if await User.find_one(User.email == user_data.email):
         raise HTTPException(status_code=409, detail="Email already registered")
 
+    # Hash password
     hashed_pwd = hash_password(user_data.password)
+
+    # Default profile image
     profile_image = user_data.userProfileImage or "https://images.alphacoders.com/135/1350043.png"
 
+    # Create user
     user = User(
         username=user_data.username,
         email=user_data.email,
@@ -44,7 +59,24 @@ async def register_user(user_data: CreateUserSchema):
         favouriteTags=user_data.favouriteTags,
     )
     await user.insert()
-    return user
+
+    # Automatically issue JWT
+    access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user.email},
+        expires_delta=access_token_expires
+    )
+
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.get("/me", response_model=UserResponseSchema)
+async def get_me(current_user: User = Depends(get_current_user)):
+    """
+    Returns the currently authenticated user's profile.
+    Requires a valid Bearer token.
+    """
+    return current_user
 
 
 # Get user by ID
