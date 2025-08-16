@@ -1,4 +1,4 @@
-package com.shrujan.loomina.ui.theme
+package com.shrujan.loomina.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme

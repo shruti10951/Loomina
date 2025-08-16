@@ -1,4 +1,4 @@
-package com.shrujan.loomina.ui.theme
+package com.shrujan.loomina.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

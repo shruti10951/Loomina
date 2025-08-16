@@ -1,4 +1,4 @@
-package com.shrujan.loomina.ui.theme
+package com.shrujan.loomina.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -26,6 +26,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        // new things added here to connect to backend
+//        debug {
+//            buildConfigField("String", "BASE_URL", "\"http://10.0.2.2:8000/\"") // emulator → your local FastAPI
+//        }
+//        release {
+//            buildConfigField("String", "BASE_URL", "\"https://api.loomina.com/\"")
+//        }
+        // new things end here
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
