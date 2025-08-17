@@ -23,38 +23,53 @@ import com.shrujan.loomina.ui.welcome.WelcomeScreen
 import com.shrujan.loomina.viewmodel.AuthViewModel
 import com.shrujan.loomina.viewmodel.AuthViewModelFactory
 
+/**
+ * MainActivity acts as the single-activity entry point for the app.
+ * It sets up Compose, initializes navigation, and wires up the AuthViewModel.
+ */
 class MainActivity : ComponentActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        // Enable drawing behind system bars
         enableEdgeToEdge()
+
+        // Set Compose content
         setContent {
             LoominaApp()
         }
     }
 }
 
+/**
+ * Root composable for the app.
+ * - Provides navigation between screens
+ * - Instantiates AuthViewModel with dependencies
+ * - Decides initial screen (Splash → Welcome/Home)
+ */
 @Composable
 fun LoominaApp() {
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // repo & prefs for ViewModel
+    // Initialize repository and preferences
     val userPrefs = UserPreferences(context)
     val repository = AuthRepository()
 
+    // Create AuthViewModel using a factory (manual DI)
     val authViewModel: AuthViewModel = viewModel(
         factory = AuthViewModelFactory(repository, userPrefs)
     )
 
+    // Observe saved token from datastore
     val savedToken by authViewModel.savedToken.collectAsState(initial = null)
 
+    // App navigation graph
     NavHost(
         navController = navController,
         startDestination = "splash"
     ) {
-        // Splash Screen
+        // Splash Screen → decides where to go (Home or Welcome)
         composable("splash") {
             SplashScreen(
                 onTimeout = {
@@ -71,7 +86,7 @@ fun LoominaApp() {
             )
         }
 
-        // Welcome Screen
+        // Welcome Screen → entry for new/unauthenticated users
         composable("welcome") {
             WelcomeScreen(
                 onGetStartedClick = {
@@ -80,7 +95,7 @@ fun LoominaApp() {
             )
         }
 
-        // Login
+        // Login Screen
         composable("login") {
             val ui = authViewModel.uiState.value
 
@@ -93,6 +108,7 @@ fun LoominaApp() {
                 }
             )
 
+            // Navigate to Home if login succeeds
             LaunchedEffect(ui.token) {
                 if (ui.token != null) {
                     navController.navigate("home") {
@@ -102,7 +118,7 @@ fun LoominaApp() {
             }
         }
 
-        // Register
+        // Register Screen
         composable("register") {
             val ui = authViewModel.registerUiState.value
 
@@ -115,6 +131,7 @@ fun LoominaApp() {
                 }
             )
 
+            // Navigate to Home if register succeeds
             LaunchedEffect(ui.token) {
                 if (ui.token != null) {
                     navController.navigate("home") {
@@ -124,7 +141,7 @@ fun LoominaApp() {
             }
         }
 
-        // Home
+        // Home Screen (after successful login/register)
         composable("home") {
             HomeScreen(
                 onLogoutClick = {

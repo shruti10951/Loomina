@@ -10,17 +10,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import kotlinx.coroutines.delay
 
+/**
+ * A simple splash screen that displays the app name "Loomina"
+ * for 2 seconds before navigating to the next screen.
+ *
+ * @param onTimeout Callback triggered after the delay to handle navigation.
+ */
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
+    // Launches a coroutine when this composable enters the composition.
     LaunchedEffect(Unit) {
-        delay(2000) // 2 seconds
-        onTimeout()
+        delay(2000) // Delay for 2 seconds
+        onTimeout() // Trigger navigation after timeout
     }
 
+    // Centered container for splash content
     Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+        modifier = Modifier.fillMaxSize(), // Take up full screen
+        contentAlignment = Alignment.Center // Center align content
     ) {
+        // Display the app name with Material theme typography
         Text(
             text = "Loomina",
             style = MaterialTheme.typography.headlineLarge

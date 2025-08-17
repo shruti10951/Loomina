@@ -16,26 +16,38 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.shrujan.loomina.theme.LoominaTheme
 
+/**
+ * WelcomeScreen - The first screen shown to users when they open the app.
+ *
+ * @param onGetStartedClick Callback function triggered when the "Get Started" button is clicked.
+ */
 @Composable
-fun WelcomeScreen(onGetStartedClick: () -> Unit){
+fun WelcomeScreen(onGetStartedClick: () -> Unit) {
+    // Applying the app's custom theme to the whole screen
     LoominaTheme {
+        // Root container to fill the screen and center the content
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+                .fillMaxSize()        // Occupies the full screen
+                .padding(16.dp),      // Adds padding from screen edges
             contentAlignment = Alignment.Center
         ) {
-            Column (horizontalAlignment = Alignment.CenterHorizontally) {
+            // Vertical arrangement of UI elements (title + button)
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                // App title / welcome text
                 Text(
                     text = "Welcome To Loomina",
-                    fontSize = 28.sp,
+                    fontSize = 28.sp, // Explicit size for prominence
                     style = MaterialTheme.typography.headlineMedium
                 )
+
+                // Spacer to add vertical gap between title and button
                 Spacer(modifier = Modifier.height(32.dp))
+
+                // Button that starts the app experience
                 Button(onClick = onGetStartedClick) {
-                    Text(
-                        text = "Get Started"
-                    )
+                    Text(text = "Get Started")
                 }
             }
         }
