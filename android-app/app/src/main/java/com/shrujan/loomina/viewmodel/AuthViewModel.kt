@@ -9,6 +9,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.MutableState
+import com.shrujan.loomina.data.local.UserPreferences
+import kotlinx.coroutines.flow.Flow
 
 data class LoginUiState(
     val loading: Boolean = false,
@@ -23,14 +25,20 @@ data class RegisterUiState(
 )
 
 class AuthViewModel(
-    private val repo: AuthRepository = AuthRepository()
+    private val repo: AuthRepository,
+    private val userPrefs: UserPreferences
 ) : ViewModel() {
 
-    // --- Login ---
+    val savedToken: Flow<String?> = userPrefs.token
+
     var uiState: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
         private set
 
+    var registerUiState: MutableState<RegisterUiState> = mutableStateOf(RegisterUiState())
+        private set
+
     private var inFlightLogin: Job? = null
+    private var inFlightRegister: Job? = null
 
     fun login(email: String, password: String) {
         if (uiState.value.loading) return
@@ -46,6 +54,10 @@ class AuthViewModel(
                         token = result.data,
                         error = null
                     )
+
+                    result.data.access_token?.let { token ->
+                        userPrefs.saveToken(token)
+                    }
                 }
                 is ApiResult.Error -> {
                     uiState.value = LoginUiState(
@@ -56,18 +68,6 @@ class AuthViewModel(
             }
         }
     }
-
-    fun cleanLoginError() {
-        if (uiState.value.error != null) {
-            uiState.value = uiState.value.copy(error = null)
-        }
-    }
-
-    // --- Register ---
-    var registerUiState: MutableState<RegisterUiState> = mutableStateOf(RegisterUiState())
-        private set
-
-    private var inFlightRegister: Job? = null
 
     fun register(email: String, username: String, password: String) {
         if (registerUiState.value.loading) return
@@ -83,6 +83,10 @@ class AuthViewModel(
                         token = result.data,
                         error = null
                     )
+
+                    result.data.access_token?.let { token ->
+                        userPrefs.saveToken(token)
+                    }
                 }
                 is ApiResult.Error -> {
                     registerUiState.value = RegisterUiState(
@@ -94,9 +98,9 @@ class AuthViewModel(
         }
     }
 
-    fun cleanRegisterError() {
-        if (registerUiState.value.error != null) {
-            registerUiState.value = registerUiState.value.copy(error = null)
+    fun logout() {
+        viewModelScope.launch {
+            userPrefs.clearToken()
         }
     }
 }

@@ -5,21 +5,29 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.shrujan.loomina.data.local.UserPreferences
+import com.shrujan.loomina.data.repository.AuthRepository
+import com.shrujan.loomina.ui.HomeScreen
 import com.shrujan.loomina.ui.auth.LoginScreen
 import com.shrujan.loomina.ui.auth.RegisterScreen
+import com.shrujan.loomina.ui.welcome.SplashScreen
 import com.shrujan.loomina.ui.welcome.WelcomeScreen
 import com.shrujan.loomina.viewmodel.AuthViewModel
-
-
-
+import com.shrujan.loomina.viewmodel.AuthViewModelFactory
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         enableEdgeToEdge()
         setContent {
             LoominaApp()
@@ -30,12 +38,40 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun LoominaApp() {
     val navController = rememberNavController()
-    val authViewModel: AuthViewModel = viewModel()
+    val context = LocalContext.current
+
+    // repo & prefs for ViewModel
+    val userPrefs = UserPreferences(context)
+    val repository = AuthRepository()
+
+    val authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(repository, userPrefs)
+    )
+
+    val savedToken by authViewModel.savedToken.collectAsState(initial = null)
 
     NavHost(
         navController = navController,
-        startDestination = "welcome"
+        startDestination = "splash"
     ) {
+        // Splash Screen
+        composable("splash") {
+            SplashScreen(
+                onTimeout = {
+                    if (savedToken != null) {
+                        navController.navigate("home") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate("welcome") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    }
+                }
+            )
+        }
+
+        // Welcome Screen
         composable("welcome") {
             WelcomeScreen(
                 onGetStartedClick = {
@@ -44,6 +80,7 @@ fun LoominaApp() {
             )
         }
 
+        // Login
         composable("login") {
             val ui = authViewModel.uiState.value
 
@@ -56,48 +93,47 @@ fun LoominaApp() {
                 }
             )
 
-            // Optional lightweight feedback (snackbar/dialog later)
-            if (ui.loading) {
-                // You can add a small CircularProgressIndicator in the screen
-                print("loadin")
-            }
-            if (ui.error != null) {
-                // Show a Text(ui.error) in the screen or a snackbar
-                print("erorr")
-            }
-            if (ui.token != null) {
-                // Success — navigate to next screen (e.g., home/thread)
-                // navController.navigate("thread") { popUpTo("login") { inclusive = true } }
-                print("success")
+            LaunchedEffect(ui.token) {
+                if (ui.token != null) {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             }
         }
 
+        // Register
         composable("register") {
-            val ui = authViewModel.uiState.value
+            val ui = authViewModel.registerUiState.value
 
             RegisterScreen(
                 onLoginClick = {
-                    navController.popBackStack() // go back to login
+                    navController.popBackStack()
                 },
                 onRegisterClick = { email, username, password ->
                     authViewModel.register(email, username, password)
                 }
             )
 
-            // Optional lightweight feedback (snackbar/dialog later)
-            if (ui.loading) {
-                // You can add a small CircularProgressIndicator in the screen
-                print("loadin")
+            LaunchedEffect(ui.token) {
+                if (ui.token != null) {
+                    navController.navigate("home") {
+                        popUpTo("register") { inclusive = true }
+                    }
+                }
             }
-            if (ui.error != null) {
-                // Show a Text(ui.error) in the screen or a snackbar
-                print("erorr")
-            }
-            if (ui.token != null) {
-                // Success — navigate to next screen (e.g., home/thread)
-                // navController.navigate("thread") { popUpTo("login") { inclusive = true } }
-                print("success")
-            }
+        }
+
+        // Home
+        composable("home") {
+            HomeScreen(
+                onLogoutClick = {
+                    authViewModel.logout()
+                    navController.navigate("welcome") {
+                        popUpTo("home") { inclusive = true }
+                    }
+                }
+            )
         }
     }
 }
