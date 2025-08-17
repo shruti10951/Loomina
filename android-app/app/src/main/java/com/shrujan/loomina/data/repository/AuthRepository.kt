@@ -8,28 +8,54 @@ import com.shrujan.loomina.utils.ApiResult
 import okio.IOException
 import retrofit2.HttpException
 
-class AuthRepository (
-    private val apiProvider: com.shrujan.loomina.data.remote.api.RetrofitProvider = RetrofitProvider
+/**
+ * AuthRepository is responsible for handling authentication-related
+ * network operations such as login and registration.
+ *
+ * It uses RetrofitProvider to communicate with the backend API
+ * and wraps responses in ApiResult for consistent error handling.
+ */
+class AuthRepository(
+    private val apiProvider: RetrofitProvider = RetrofitProvider
 ) {
-    suspend fun login(email: String, password: String): ApiResult<TokenResponse>{
+
+    /**
+     * Attempts to log in the user with given credentials.
+     *
+     * @param email user's email
+     * @param password user's password
+     * @return ApiResult containing TokenResponse on success, or error message on failure
+     */
+    suspend fun login(email: String, password: String): ApiResult<TokenResponse> {
         return try {
+            // Make login API request with provided credentials
             val res = apiProvider.authApi.login(LoginRequest(email, password))
-            ApiResult.Success(res)
+            ApiResult.Success(res)  // Wrap successful response
         } catch (e: HttpException) {
-            // Server responded with error (401, 409)
+            // API responded with an error (e.g., 401 Unauthorized, 409 Conflict)
             ApiResult.Error(e.response()?.errorBody()?.string() ?: "HTTP ${e.code()}")
         } catch (e: IOException) {
-            // Network error / no internet / timeout
+            // Network-related error (e.g., no internet, timeout)
             ApiResult.Error("Network error. Check your connection.")
         } catch (e: Exception) {
+            // Catch-all for unexpected errors
             ApiResult.Error("Unexpected error: ${e.message ?: "unknown"}")
         }
     }
 
-    suspend fun register(email: String, username: String, password: String): ApiResult<TokenResponse>{
+    /**
+     * Attempts to register a new user with given details.
+     *
+     * @param email user's email
+     * @param username chosen username
+     * @param password chosen password
+     * @return ApiResult containing TokenResponse on success, or error message on failure
+     */
+    suspend fun register(email: String, username: String, password: String): ApiResult<TokenResponse> {
         return try {
+            // Make registration API request with provided details
             val res = apiProvider.authApi.register(RegisterRequest(email, username, password))
-            ApiResult.Success(res)
+            ApiResult.Success(res)  // Wrap successful response
         } catch (e: HttpException) {
             ApiResult.Error(e.response()?.errorBody()?.string() ?: "HTTP ${e.code()}")
         } catch (e: IOException) {
