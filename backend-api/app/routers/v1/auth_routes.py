@@ -13,7 +13,7 @@ router = APIRouter()
 
 
 # Form login for Swagger
-@router.post("/login", response_model=TokenResponse)
+@router.post("/login/form", response_model=TokenResponse)
 async def login_form(form_data: OAuth2PasswordRequestForm = Depends()):
     """
     Form-data login for Swagger OAuth2 popup.
@@ -39,7 +39,7 @@ async def login_form(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 # JSON login for your app
-@router.post("/login/json", response_model=TokenResponse)
+@router.post("/login", response_model=TokenResponse)
 async def login_json(payload: LoginSchema):
     """
     JSON login for app/clients.

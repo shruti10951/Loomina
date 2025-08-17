@@ -19,12 +19,13 @@ from app.utils.jwt import create_access_token
 from app.utils.security import get_current_user
 
 # Initialize API Router with prefix and tags for documentation
-router = APIRouter(prefix="/users", tags=["Users"])
+router = APIRouter()
+
 
 # ---------------------------
 # User Registration
 # ---------------------------
-@router.post("/", response_model=TokenResponse, status_code=201)
+@router.post("/register", response_model=TokenResponse, status_code=201)
 async def register_user(user_data: CreateUserSchema):
     """
     Register a new user.
