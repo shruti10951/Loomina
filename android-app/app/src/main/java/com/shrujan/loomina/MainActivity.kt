@@ -75,11 +75,13 @@ fun LoominaApp() {
                 onTimeout = {
                     if (savedToken != null) {
                         navController.navigate("home") {
-                            popUpTo("splash") { inclusive = true }
+                            popUpTo(0) { inclusive = true } // clear entire back stack
+                            launchSingleTop = true
                         }
                     } else {
                         navController.navigate("welcome") {
-                            popUpTo("splash") { inclusive = true }
+                            popUpTo(0) { inclusive = true } // clear splash
+                            launchSingleTop = true
                         }
                     }
                 }
@@ -112,7 +114,8 @@ fun LoominaApp() {
             LaunchedEffect(ui.token) {
                 if (ui.token != null) {
                     navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
+                        popUpTo(0) { inclusive = true } // clear stack before home
+                        launchSingleTop = true
                     }
                 }
             }
@@ -135,7 +138,8 @@ fun LoominaApp() {
             LaunchedEffect(ui.token) {
                 if (ui.token != null) {
                     navController.navigate("home") {
-                        popUpTo("register") { inclusive = true }
+                        popUpTo(0) { inclusive = true } // clear stack before home
+                        launchSingleTop = true
                     }
                 }
             }
@@ -147,7 +151,8 @@ fun LoominaApp() {
                 onLogoutClick = {
                     authViewModel.logout()
                     navController.navigate("welcome") {
-                        popUpTo("home") { inclusive = true }
+                        popUpTo(0) { inclusive = true } // clear back stack on logout
+                        launchSingleTop = true
                     }
                 }
             )
