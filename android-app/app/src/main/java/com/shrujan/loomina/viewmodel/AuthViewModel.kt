@@ -12,36 +12,62 @@ import androidx.compose.runtime.MutableState
 import com.shrujan.loomina.data.local.UserPreferences
 import kotlinx.coroutines.flow.Flow
 
+/**
+ * UI state holder for login screen.
+ * Tracks loading state, errors, and token on success.
+ */
 data class LoginUiState(
     val loading: Boolean = false,
     val error: String? = null,
     val token: TokenResponse? = null
 )
 
+/**
+ * UI state holder for register screen.
+ * Similar to LoginUiState but separated for clarity.
+ */
 data class RegisterUiState(
     val loading: Boolean = false,
     val error: String? = null,
     val token: TokenResponse? = null
 )
 
+/**
+ * AuthViewModel acts as the bridge between UI (Compose) and data layer (Repository + Preferences).
+ * - Manages login and registration logic
+ * - Exposes UI state (LoginUiState, RegisterUiState)
+ * - Persists tokens via UserPreferences
+ */
 class AuthViewModel(
     private val repo: AuthRepository,
     private val userPrefs: UserPreferences
 ) : ViewModel() {
 
+    // Flow that exposes the saved token from DataStore
     val savedToken: Flow<String?> = userPrefs.token
 
+    // UI state for login
     var uiState: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
         private set
 
+    // UI state for register
     var registerUiState: MutableState<RegisterUiState> = mutableStateOf(RegisterUiState())
         private set
 
+    // Track running login/register jobs to cancel old requests if needed
     private var inFlightLogin: Job? = null
     private var inFlightRegister: Job? = null
 
+    /**
+     * Handles login process:
+     * - Cancels any existing login job
+     * - Updates state to loading
+     * - Calls repository
+     * - Updates UI state with result (success or error)
+     * - Saves token on success
+     */
     fun login(email: String, password: String) {
-        if (uiState.value.loading) return
+        if (uiState.value.loading) return  // Prevent duplicate requests
 
         inFlightLogin?.cancel()
         uiState.value = LoginUiState(loading = true)
@@ -55,7 +81,8 @@ class AuthViewModel(
                         error = null
                     )
 
-                    result.data.access_token?.let { token ->
+                    // Save token in DataStore for persistence
+                    result.data.access_token.let { token ->
                         userPrefs.saveToken(token)
                     }
                 }
@@ -69,8 +96,16 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Handles registration process:
+     * - Cancels any existing registration job
+     * - Updates state to loading
+     * - Calls repository
+     * - Updates UI state with result (success or error)
+     * - Saves token on success
+     */
     fun register(email: String, username: String, password: String) {
-        if (registerUiState.value.loading) return
+        if (registerUiState.value.loading) return  // Prevent duplicate requests
 
         inFlightRegister?.cancel()
         registerUiState.value = RegisterUiState(loading = true)
@@ -84,7 +119,8 @@ class AuthViewModel(
                         error = null
                     )
 
-                    result.data.access_token?.let { token ->
+                    // Save token in DataStore for persistence
+                    result.data.access_token.let { token ->
                         userPrefs.saveToken(token)
                     }
                 }
@@ -98,6 +134,9 @@ class AuthViewModel(
         }
     }
 
+    /**
+     * Clears the saved token (logout functionality).
+     */
     fun logout() {
         viewModelScope.launch {
             userPrefs.clearToken()
