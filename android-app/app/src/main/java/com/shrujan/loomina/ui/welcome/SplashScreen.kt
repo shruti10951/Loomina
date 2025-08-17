@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
 
 /**
@@ -16,6 +17,7 @@ import kotlinx.coroutines.delay
  *
  * @param onTimeout Callback triggered after the delay to handle navigation.
  */
+
 @Composable
 fun SplashScreen(onTimeout: () -> Unit) {
     // Launches a coroutine when this composable enters the composition.
@@ -29,10 +31,18 @@ fun SplashScreen(onTimeout: () -> Unit) {
         modifier = Modifier.fillMaxSize(), // Take up full screen
         contentAlignment = Alignment.Center // Center align content
     ) {
-        // Display the app name with Material theme typography
+        // Displa
+        // y the app name with Material theme typography
         Text(
             text = "Loomina",
             style = MaterialTheme.typography.headlineLarge
         )
     }
+}
+
+// This is just for preview
+@Preview(showBackground = true, showSystemUi = true)
+@Composable
+fun SplashScreenPreview() {
+    SplashScreen(onTimeout = {})
 }
