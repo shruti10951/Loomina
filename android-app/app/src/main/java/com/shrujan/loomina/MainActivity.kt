@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
+import com.shrujan.loomina.data.repository.UserRepository
 import com.shrujan.loomina.ui.HomeScreen
 import com.shrujan.loomina.ui.auth.LoginScreen
 import com.shrujan.loomina.ui.auth.RegisterScreen
@@ -22,6 +23,8 @@ import com.shrujan.loomina.ui.welcome.SplashScreen
 import com.shrujan.loomina.ui.welcome.WelcomeScreen
 import com.shrujan.loomina.viewmodel.AuthViewModel
 import com.shrujan.loomina.viewmodel.AuthViewModelFactory
+import com.shrujan.loomina.viewmodel.HomeViewModel
+import com.shrujan.loomina.viewmodel.HomeViewModelFactory
 
 /**
  * MainActivity acts as the single-activity entry point for the app.
@@ -59,6 +62,10 @@ fun LoominaApp() {
     // Create AuthViewModel using a factory (manual DI)
     val authViewModel: AuthViewModel = viewModel(
         factory = AuthViewModelFactory(repository, userPrefs)
+    )
+
+    val homeViewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(UserRepository())
     )
 
     // Observe saved token from datastore
@@ -147,15 +154,21 @@ fun LoominaApp() {
 
         // Home Screen (after successful login/register)
         composable("home") {
-            HomeScreen(
-                onLogoutClick = {
-                    authViewModel.logout()
-                    navController.navigate("welcome") {
-                        popUpTo(0) { inclusive = true } // clear back stack on logout
-                        launchSingleTop = true
-                    }
-                }
-            )
+            savedToken?.let { token ->
+                HomeScreen(
+                    onLogoutClick = {
+                        authViewModel.logout()
+                        navController.navigate("welcome") {
+                            popUpTo(0) { inclusive = true } // clear back stack on logout
+                            launchSingleTop = true
+                        }
+                    },
+                    viewModel = homeViewModel,
+                    token = token
+
+                )
+            }
+
         }
     }
 }

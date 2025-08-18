@@ -46,4 +46,5 @@ object RetrofitProvider {
 
     // Exposed API service for authentication-related endpoints
     val authApi: AuthApi = retrofit.create(AuthApi::class.java)
+    val userApi: UserApi = retrofit.create(UserApi::class.java)
 }
