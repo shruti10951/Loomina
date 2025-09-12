@@ -13,7 +13,9 @@ import kotlinx.coroutines.launch
  * HomeViewModel - Handles user data fetching and exposes it to the UI.
  * Uses Kotlin Coroutines + StateFlow for reactive state management.
  */
-class HomeViewModel (private val userRepository: UserRepository) : ViewModel() {
+class HomeViewModel (
+    private val userRepository: UserRepository
+) : ViewModel() {
 
     // Backing property for user details, nullable initially
     private val _user = MutableStateFlow<UserResponse?>(null)
@@ -26,24 +28,20 @@ class HomeViewModel (private val userRepository: UserRepository) : ViewModel() {
     val error: StateFlow<String?> = _error
 
     /**
-     * Loads the currently logged-in user's details from backend using the provided token.
+     * Loads the currently logged-in user's details from backend.
      * The result is collected from UserRepository and stored in StateFlow.
-     *
-     * @param token The authentication token used to fetch the current user's data.
      */
-    fun loadUser(token: String){
+    fun loadUser() {
         viewModelScope.launch {
-            // Call the repository and handle result
-            when (val result = userRepository.getCurrentUser(token)) {
+            when (val result = userRepository.getCurrentUser()) {
                 is ApiResult.Success -> {
-                    // If successful, update user StateFlow with received data
                     _user.value = result.data
                 }
                 is ApiResult.Error -> {
-                    // If error occurs, update error StateFlow with message
                     _error.value = result.message
                 }
             }
         }
     }
+
 }

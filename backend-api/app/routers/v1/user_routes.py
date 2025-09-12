@@ -18,7 +18,7 @@ from app.utils.hashing import hash_password
 from app.utils.jwt import create_access_token
 from app.utils.security import get_current_user
 
-# Initialize API Router with prefix and tags for documentation
+# Initialize API Router
 router = APIRouter()
 
 

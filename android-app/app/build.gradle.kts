@@ -75,9 +75,12 @@ dependencies {
     // Compose helper to obtain ViewModel in composables
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
 
-    //
+
     // Datastore
     implementation("androidx.datastore:datastore-preferences:1.1.7")
+
+    // Image preview
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

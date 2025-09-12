@@ -18,7 +18,6 @@ interface UserApi {
      * and should be called from a coroutine or another suspend function.
      */
     @GET("/api/v1/users/me")
-    suspend fun getCurrentUser(
-        @Header("Authorization") token: String // Adds Authorization header to the request
-    ): UserResponse
+    suspend fun getCurrentUser(): UserResponse
+
 }
