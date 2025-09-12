@@ -80,6 +80,7 @@ dependencies {
     implementation("androidx.datastore:datastore-preferences:1.1.7")
 
     // Image preview
+    implementation("io.coil-kt:coil:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
 
     testImplementation(libs.junit)

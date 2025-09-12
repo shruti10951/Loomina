@@ -10,11 +10,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.navigation.NavController
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.shrujan.loomina.R
 import com.shrujan.loomina.viewmodel.ThreadViewModel
+import androidx.compose.ui.platform.LocalContext
+
+import android.util.Log
+import androidx.compose.ui.platform.LocalContext
+import coil.request.ImageRequest
+import coil.request.SuccessResult
+import coil.request.ErrorResult
+
+
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -34,6 +45,12 @@ fun CreateThreadScreen(
 
     // Observe ViewModel state
     val uiState = viewModel.uiState.value
+
+    val isFormValid = threadTitle.trim().isNotEmpty() &&
+            prompt.trim().isNotEmpty() &&
+            selectedGenres.isNotEmpty() &&
+            tags.isNotEmpty()
+
 
     Scaffold { innerPadding ->
         Column(
@@ -70,14 +87,34 @@ fun CreateThreadScreen(
             )
 
             if (coverImageUrl.isNotBlank()) {
-                AsyncImage(
-                    model = coverImageUrl,
-                    contentDescription = "Cover Image Preview",
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(180.dp)
-                )
+                        .height(200.dp),
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(coverImageUrl.trim()) // 👈 use user-entered link
+                            .crossfade(true)
+                            .placeholder(R.drawable.placeholder)   // 👈 loading state
+                            .error(R.drawable.image_error)         // 👈 fallback if fails
+                            .listener(
+                                onSuccess = { _: ImageRequest, _: SuccessResult ->
+                                    Log.d("CoilDebug", "Image loaded successfully")
+                                },
+                                onError = { _: ImageRequest, error: ErrorResult ->
+                                    Log.e("CoilDebug", "Image load failed", error.throwable)
+                                }
+                            )
+                            .build(),
+                        contentDescription = "Cover Image Preview",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxSize()
+                    )
+                }
             }
+
 
             // Genre Chips
             Text("Select Genres")
@@ -145,13 +182,13 @@ fun CreateThreadScreen(
                     viewModel.createThread(
                         threadTitle = threadTitle,
                         prompt = prompt,
-                        coverImage = coverImageUrl.ifBlank { null },
+                        coverImage = coverImageUrl,
                         genre = selectedGenres,
                         tags = tags
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = !uiState.loading
+                enabled = isFormValid && !uiState.loading
             ) {
                 if (uiState.loading) {
                     CircularProgressIndicator(

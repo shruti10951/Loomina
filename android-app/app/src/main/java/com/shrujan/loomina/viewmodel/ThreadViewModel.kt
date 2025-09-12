@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.utils.ApiResult
@@ -49,13 +50,28 @@ class ThreadViewModel(
         genre: List<String>,
         tags: List<String>
     ) {
-        if (uiState.value.loading) return // prevent spamming
+        if (uiState.value.loading) return
+
+        val request = ThreadRequest(threadTitle, prompt, coverImage, genre, tags).sanitized()
+        if (!request.isValid()) {
+            uiState.value = ThreadUiState(
+                loading = false,
+                error = "Please fill all required fields correctly."
+            )
+            return
+        }
 
         inFlightCreate?.cancel()
         uiState.value = ThreadUiState(loading = true)
 
         inFlightCreate = viewModelScope.launch {
-            when (val result = repo.createThread(threadTitle, prompt, coverImage, genre, tags)) {
+            when (val result = repo.createThread(
+                request.threadTitle,
+                request.prompt,
+                request.coverImage,
+                request.genre,
+                request.tags
+            )) {
                 is ApiResult.Success -> {
                     uiState.value = ThreadUiState(
                         loading = false,
@@ -72,4 +88,5 @@ class ThreadViewModel(
             }
         }
     }
+
 }

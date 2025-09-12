@@ -28,7 +28,7 @@ async def create_thread(
 
     
     # for now hardcoding image url for all threads
-    coverImage = "https://i.pinimg.com/736x/80/1e/15/801e15facd363f7025931f4c6c1eb0d2.jpg"
+    coverImage = thread_data.coverImage or "https://i.pinimg.com/736x/80/1e/15/801e15facd363f7025931f4c6c1eb0d2.jpg"
 
     # Create new thread document
     thread = Thread(
