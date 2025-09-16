@@ -153,6 +153,7 @@ fun LoominaApp() {
             )
         }
 
+        // show all current user's threads
         composable("show-threads") {
             ShowThreadsScreen(
                 navController = navController,
