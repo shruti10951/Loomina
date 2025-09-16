@@ -62,6 +62,12 @@ fun HomeScreen(
                         ) {
                             Text("Create")
                         }
+
+                        Button(
+                            onClick = { navController.navigate("show-threads") }
+                        ) {
+                            Text("Show Threads")
+                        }
                     }
                 }
                 errorState != null -> {

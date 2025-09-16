@@ -25,3 +25,10 @@ data class UserResponse (
     val following: List<String> = emptyList(),
     val creationTime: String
 )
+
+data class MinimalUser(
+    val _id: String,
+    val username: String,
+    val userProfileImage: String?
+)
+

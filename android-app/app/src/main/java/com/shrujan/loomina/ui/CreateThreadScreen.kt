@@ -16,11 +16,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.shrujan.loomina.R
-import com.shrujan.loomina.viewmodel.ThreadViewModel
+import com.shrujan.loomina.viewmodel.CreateThreadViewModel
 import androidx.compose.ui.platform.LocalContext
 
 import android.util.Log
-import androidx.compose.ui.platform.LocalContext
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.request.ErrorResult
@@ -31,7 +30,7 @@ import coil.request.ErrorResult
 @Composable
 fun CreateThreadScreen(
     navController: NavController,
-    viewModel: ThreadViewModel
+    viewModel: CreateThreadViewModel
 ) {
     var threadTitle by remember { mutableStateOf("") }
     var prompt by remember { mutableStateOf("") }

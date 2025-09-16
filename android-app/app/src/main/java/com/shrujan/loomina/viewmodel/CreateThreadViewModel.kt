@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 /**
  * UI state holder for creating a thread.
  */
-data class ThreadUiState(
+data class CreateThreadUiState(
     val loading: Boolean = false,
     val error: String? = null,
     val thread: ThreadResponse? = null
@@ -25,12 +25,12 @@ data class ThreadUiState(
  * - Manages createThread logic
  * - Exposes UI state (ThreadUiState)
  */
-class ThreadViewModel(
+class CreateThreadViewModel(
     private val repo: ThreadRepository
 ) : ViewModel() {
 
     // UI state for thread creation
-    var uiState: MutableState<ThreadUiState> = mutableStateOf(ThreadUiState())
+    var uiState: MutableState<CreateThreadUiState> = mutableStateOf(CreateThreadUiState())
         private set
 
     // Track running thread creation job
@@ -54,7 +54,7 @@ class ThreadViewModel(
 
         val request = ThreadRequest(threadTitle, prompt, coverImage, genre, tags).sanitized()
         if (!request.isValid()) {
-            uiState.value = ThreadUiState(
+            uiState.value = CreateThreadUiState(
                 loading = false,
                 error = "Please fill all required fields correctly."
             )
@@ -62,7 +62,7 @@ class ThreadViewModel(
         }
 
         inFlightCreate?.cancel()
-        uiState.value = ThreadUiState(loading = true)
+        uiState.value = CreateThreadUiState(loading = true)
 
         inFlightCreate = viewModelScope.launch {
             when (val result = repo.createThread(
@@ -73,14 +73,14 @@ class ThreadViewModel(
                 request.tags
             )) {
                 is ApiResult.Success -> {
-                    uiState.value = ThreadUiState(
+                    uiState.value = CreateThreadUiState(
                         loading = false,
                         thread = result.data,
                         error = null
                     )
                 }
                 is ApiResult.Error -> {
-                    uiState.value = ThreadUiState(
+                    uiState.value = CreateThreadUiState(
                         loading = false,
                         error = result.message
                     )

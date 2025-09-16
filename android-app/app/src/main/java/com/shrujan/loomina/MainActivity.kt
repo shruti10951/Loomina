@@ -20,6 +20,7 @@ import com.shrujan.loomina.ui.CreateScreen
 import com.shrujan.loomina.ui.CreateStoryScreen
 import com.shrujan.loomina.ui.CreateThreadScreen
 import com.shrujan.loomina.ui.HomeScreen
+import com.shrujan.loomina.ui.ShowThreadsScreen
 import com.shrujan.loomina.ui.auth.LoginScreen
 import com.shrujan.loomina.ui.auth.RegisterScreen
 import com.shrujan.loomina.ui.welcome.SplashScreen
@@ -28,7 +29,8 @@ import com.shrujan.loomina.viewmodel.AuthViewModel
 import com.shrujan.loomina.viewmodel.AuthViewModelFactory
 import com.shrujan.loomina.viewmodel.HomeViewModel
 import com.shrujan.loomina.viewmodel.HomeViewModelFactory
-import com.shrujan.loomina.viewmodel.ThreadViewModel
+import com.shrujan.loomina.viewmodel.CreateThreadViewModel
+import com.shrujan.loomina.viewmodel.ShowThreadsViewModel
 import com.shrujan.loomina.viewmodel.ThreadViewModelFactory
 
 class MainActivity : ComponentActivity() {
@@ -61,8 +63,10 @@ fun LoominaApp() {
     val homeViewModel: HomeViewModel = viewModel(
         factory = HomeViewModelFactory(userRepository)
     )
-
-    val threadViewModel: ThreadViewModel = viewModel (
+    val createThreadViewModel: CreateThreadViewModel = viewModel (
+        factory = ThreadViewModelFactory(threadRepository)
+    )
+    val showThreadsViewModel: ShowThreadsViewModel = viewModel (
         factory = ThreadViewModelFactory(threadRepository)
     )
 
@@ -138,7 +142,7 @@ fun LoominaApp() {
         composable("thread") {
             CreateThreadScreen(
                 navController = navController,
-                viewModel = threadViewModel
+                viewModel = createThreadViewModel
             )
         }
 
@@ -146,6 +150,13 @@ fun LoominaApp() {
         composable("story") {
             CreateStoryScreen(
 
+            )
+        }
+
+        composable("show-threads") {
+            ShowThreadsScreen(
+                navController = navController,
+                viewModel = showThreadsViewModel
             )
         }
     }

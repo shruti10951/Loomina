@@ -38,4 +38,14 @@ class ThreadRepository(context: Context) {
             ApiResult.Error("Unexpected error: ${e.message ?: "unknown"}")
         }
     }
+
+    suspend fun getMyThreads(): ApiResult<List<ThreadResponse>> {
+        return try {
+            val res = apiProvider.threadApi.getMyThreads() // Retrofit call
+            ApiResult.Success(res)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
 }

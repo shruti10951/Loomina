@@ -1,12 +1,17 @@
 package com.shrujan.loomina.data.remote.api
 
+import android.R
 import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface ThreadApi {
 
     @POST("api/v1/threads/create")
     suspend fun createThread(@Body body: ThreadRequest): ThreadResponse
+
+    @GET("api/v1/threads/me")
+    suspend fun getMyThreads(): List<ThreadResponse>
 }
