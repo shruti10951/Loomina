@@ -11,10 +11,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.MutableState
 import com.shrujan.loomina.data.local.UserPreferences
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+/**
+ * Represents authentication state of the user.
+ */
+sealed class AuthState {
+    object Loading : AuthState()
+    data class Authenticated(val token: String) : AuthState()
+    object Unauthenticated : AuthState()
+}
 
 /**
  * UI state holder for login screen.
- * Tracks loading state, errors, and token on success.
  */
 data class LoginUiState(
     val loading: Boolean = false,
@@ -24,7 +34,6 @@ data class LoginUiState(
 
 /**
  * UI state holder for register screen.
- * Similar to LoginUiState but separated for clarity.
  */
 data class RegisterUiState(
     val loading: Boolean = false,
@@ -37,6 +46,7 @@ data class RegisterUiState(
  * - Manages login and registration logic
  * - Exposes UI state (LoginUiState, RegisterUiState)
  * - Persists tokens via UserPreferences
+ * - Exposes high-level AuthState for navigation decisions (loading / authenticated / unauthenticated)
  */
 class AuthViewModel(
     private val repo: AuthRepository,
@@ -46,6 +56,10 @@ class AuthViewModel(
     // Flow that exposes the saved token from DataStore
     val savedToken: Flow<String?> = userPrefs.token
 
+    // New: StateFlow that wraps savedToken into AuthState
+    private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
+    val authState: StateFlow<AuthState> = _authState
+
     // UI state for login
     var uiState: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
         private set
@@ -54,20 +68,28 @@ class AuthViewModel(
     var registerUiState: MutableState<RegisterUiState> = mutableStateOf(RegisterUiState())
         private set
 
-    // Track running login/register jobs to cancel old requests if needed
+    // Track running login/register jobs
     private var inFlightLogin: Job? = null
     private var inFlightRegister: Job? = null
 
+    init {
+        // Observe DataStore token and update authState accordingly
+        viewModelScope.launch {
+            savedToken.collect { token ->
+                _authState.value = if (token != null) {
+                    AuthState.Authenticated(token)
+                } else {
+                    AuthState.Unauthenticated
+                }
+            }
+        }
+    }
+
     /**
      * Handles login process:
-     * - Cancels any existing login job
-     * - Updates state to loading
-     * - Calls repository
-     * - Updates UI state with result (success or error)
-     * - Saves token on success
      */
     fun login(email: String, password: String) {
-        if (uiState.value.loading) return  // Prevent duplicate requests
+        if (uiState.value.loading) return
 
         inFlightLogin?.cancel()
         uiState.value = LoginUiState(loading = true)
@@ -80,8 +102,6 @@ class AuthViewModel(
                         token = result.data,
                         error = null
                     )
-
-                    // Save token in DataStore for persistence
                     result.data.access_token.let { token ->
                         userPrefs.saveToken(token)
                     }
@@ -98,14 +118,9 @@ class AuthViewModel(
 
     /**
      * Handles registration process:
-     * - Cancels any existing registration job
-     * - Updates state to loading
-     * - Calls repository
-     * - Updates UI state with result (success or error)
-     * - Saves token on success
      */
     fun register(email: String, username: String, password: String) {
-        if (registerUiState.value.loading) return  // Prevent duplicate requests
+        if (registerUiState.value.loading) return
 
         inFlightRegister?.cancel()
         registerUiState.value = RegisterUiState(loading = true)
@@ -118,8 +133,6 @@ class AuthViewModel(
                         token = result.data,
                         error = null
                     )
-
-                    // Save token in DataStore for persistence
                     result.data.access_token.let { token ->
                         userPrefs.saveToken(token)
                     }
@@ -135,7 +148,7 @@ class AuthViewModel(
     }
 
     /**
-     * Clears the saved token (logout functionality).
+     * Clears the saved token (logout).
      */
     fun logout() {
         viewModelScope.launch {

@@ -7,11 +7,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.shrujan.loomina.theme.LoominaTheme
 
 
 @Composable
-fun CreateStoryScreen () {
+fun CreateStoryScreen (
+    navController: NavController,
+) {
     LoominaTheme {
         Box(
             modifier = Modifier.fillMaxSize()

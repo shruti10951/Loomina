@@ -1,21 +1,34 @@
-package com.shrujan.loomina.ui
+package com.shrujan.loomina.ui.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.shrujan.loomina.data.local.UserPreferences
+import com.shrujan.loomina.data.repository.AuthRepository
+import com.shrujan.loomina.data.repository.UserRepository
 import com.shrujan.loomina.theme.LoominaTheme
 import com.shrujan.loomina.viewmodel.AuthViewModel
 import com.shrujan.loomina.viewmodel.HomeViewModel
+import com.shrujan.loomina.viewmodel.factory.AuthViewModelFactory
+import com.shrujan.loomina.viewmodel.factory.HomeViewModelFactory
 
 @Composable
 fun HomeScreen(
     navController: NavController,
-    viewModel: HomeViewModel,
-    authViewModel: AuthViewModel
+    viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(
+        userRepository = UserRepository(LocalContext.current)
+    )),
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(
+        AuthRepository(LocalContext.current),
+        UserPreferences(LocalContext.current)
+    )
+    )
 ) {
     val userState by viewModel.user.collectAsState()
     val errorState by viewModel.error.collectAsState()

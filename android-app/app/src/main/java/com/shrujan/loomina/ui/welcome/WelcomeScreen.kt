@@ -14,15 +14,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.shrujan.loomina.theme.LoominaTheme
+import com.shrujan.loomina.ui.navigation.Routes
 
 /**
  * WelcomeScreen - The first screen shown to users when they open the app.
  *
- * @param onGetStartedClick Callback function triggered when the "Get Started" button is clicked.
  */
 @Composable
-fun WelcomeScreen(onGetStartedClick: () -> Unit) {
+fun WelcomeScreen(
+    navController: NavController
+) {
     // Applying the app's custom theme to the whole screen
     LoominaTheme {
         // Root container to fill the screen and center the content
@@ -46,7 +49,7 @@ fun WelcomeScreen(onGetStartedClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(32.dp))
 
                 // Button that starts the app experience
-                Button(onClick = onGetStartedClick) {
+                Button(onClick = { navController.navigate(Routes.LOGIN) }) {
                     Text(text = "Get Started")
                 }
             }

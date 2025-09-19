@@ -1,4 +1,4 @@
-package com.shrujan.loomina.ui
+package com.shrujan.loomina.ui.create
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,17 +13,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.shrujan.loomina.theme.LoominaTheme
+import com.shrujan.loomina.ui.navigation.Routes
 
 @Composable
 fun CreateScreen(
-    onThreadClick: () -> Unit,
-    onStoryClick: () -> Unit
+    navController: NavController,
 ) {
 
     LoominaTheme {
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
@@ -36,13 +38,13 @@ fun CreateScreen(
 
                 Spacer(modifier = Modifier.height(24.dp))
 
-                Button( onClick = onThreadClick) {
+                Button( onClick = { navController.navigate(Routes.THREAD) }) {
                     Text("Thread")
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
-                Button( onClick = onStoryClick) {
+                Button( onClick = { navController.navigate(Routes.STORY) }) {
                     Text("Story")
                 }
             }

@@ -20,17 +20,21 @@ import com.shrujan.loomina.viewmodel.CreateThreadViewModel
 import androidx.compose.ui.platform.LocalContext
 
 import android.util.Log
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import coil.request.ErrorResult
-
+import com.shrujan.loomina.data.repository.ThreadRepository
+import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CreateThreadScreen(
     navController: NavController,
-    viewModel: CreateThreadViewModel
+    viewModel: CreateThreadViewModel = viewModel(factory = ThreadViewModelFactory(
+        repository = ThreadRepository(LocalContext.current)
+    ))
 ) {
     var threadTitle by remember { mutableStateOf("") }
     var prompt by remember { mutableStateOf("") }
@@ -94,10 +98,10 @@ fun CreateThreadScreen(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(coverImageUrl.trim()) // 👈 use user-entered link
+                            .data(coverImageUrl.trim()) //  use user-entered link
                             .crossfade(true)
-                            .placeholder(R.drawable.placeholder)   // 👈 loading state
-                            .error(R.drawable.image_error)         // 👈 fallback if fails
+                            .placeholder(R.drawable.placeholder)   //  loading state
+                            .error(R.drawable.image_error)         //  fallback if fails
                             .listener(
                                 onSuccess = { _: ImageRequest, _: SuccessResult ->
                                     Log.d("CoilDebug", "Image loaded successfully")
