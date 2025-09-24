@@ -12,7 +12,7 @@ object Routes {
     const val HOME = "home"
     const val EXPLORE = "explore"
     const val CREATE = "create"
-    const val NOTIFICATION = "notification"
+    const val LIBRARY = "library"
     const val PROFILE = "profile"
     const val THREAD = "thread"
     const val STORY = "story"

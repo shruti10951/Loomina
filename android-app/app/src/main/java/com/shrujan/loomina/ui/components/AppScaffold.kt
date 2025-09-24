@@ -18,7 +18,7 @@ fun AppScaffold(navController: NavHostController) {
         Routes.HOME,
         Routes.EXPLORE,
         Routes.CREATE,
-        Routes.NOTIFICATION,
+        Routes.LIBRARY,
         Routes.PROFILE
     )
 

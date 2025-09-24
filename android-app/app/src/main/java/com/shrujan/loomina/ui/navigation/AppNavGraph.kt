@@ -14,7 +14,7 @@ import com.shrujan.loomina.ui.auth.RegisterScreen
 import com.shrujan.loomina.ui.create.CreateScreen
 import com.shrujan.loomina.ui.explore.ExploreScreen
 import com.shrujan.loomina.ui.home.HomeScreen
-import com.shrujan.loomina.ui.notification.NotificationScreen
+import com.shrujan.loomina.ui.library.LibraryScreen
 import com.shrujan.loomina.ui.profile.ProfileScreen
 import com.shrujan.loomina.ui.welcome.SplashScreen
 import com.shrujan.loomina.ui.welcome.WelcomeScreen
@@ -40,8 +40,8 @@ fun AppNavGraph(navController: NavHostController, innerPadding: PaddingValues) {
             composable(Routes.CREATE) {
                 CreateScreen(navController = navController, innerPadding = innerPadding)
             }
-            composable(Routes.NOTIFICATION) {
-                NotificationScreen(navController = navController, innerPadding = innerPadding)
+            composable(Routes.LIBRARY) {
+                LibraryScreen(navController = navController, innerPadding = innerPadding)
             }
             composable(Routes.PROFILE) {
                 ProfileScreen(navController = navController, innerPadding = innerPadding)
