@@ -1,4 +1,4 @@
-package com.shrujan.loomina.ui
+package com.shrujan.loomina.ui.create
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
+import com.shrujan.loomina.theme.LoominaTheme
 
 @Composable
 fun ExploreScreen(
@@ -24,5 +25,6 @@ fun ExploreScreen(
             style = MaterialTheme.typography.headlineLarge
         )
     }
+
 
 }

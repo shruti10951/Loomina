@@ -1,4 +1,4 @@
-package com.shrujan.loomina.ui
+package com.shrujan.loomina.ui.create
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,16 +12,16 @@ import com.shrujan.loomina.theme.LoominaTheme
 
 
 @Composable
-fun CreateStoryScreen (
+fun CreateStoryScreen(
     navController: NavController,
 ) {
-    LoominaTheme {
-        Box(
-            modifier = Modifier.fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
 
-        }
     }
+
 }

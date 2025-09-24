@@ -6,8 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import com.shrujan.loomina.ui.CreateStoryScreen
-import com.shrujan.loomina.ui.CreateThreadScreen
+import com.shrujan.loomina.ui.create.CreateStoryScreen
+import com.shrujan.loomina.ui.create.CreateThreadScreen
 import com.shrujan.loomina.ui.ShowThreadsScreen
 import com.shrujan.loomina.ui.auth.LoginScreen
 import com.shrujan.loomina.ui.auth.RegisterScreen

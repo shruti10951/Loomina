@@ -26,33 +26,31 @@ import com.shrujan.loomina.ui.navigation.Routes
 fun WelcomeScreen(
     navController: NavController
 ) {
-    // Applying the app's custom theme to the whole screen
-    LoominaTheme {
-        // Root container to fill the screen and center the content
-        Box(
-            modifier = Modifier
-                .fillMaxSize()        // Occupies the full screen
-                .padding(16.dp),      // Adds padding from screen edges
-            contentAlignment = Alignment.Center
-        ) {
-            // Vertical arrangement of UI elements (title + button)
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+    // Root container to fill the screen and center the content
+    Box(
+        modifier = Modifier
+            .fillMaxSize()        // Occupies the full screen
+            .padding(16.dp),      // Adds padding from screen edges
+        contentAlignment = Alignment.Center
+    ) {
+        // Vertical arrangement of UI elements (title + button)
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
 
-                // App title / welcome text
-                Text(
-                    text = "Welcome To Loomina",
-                    fontSize = 28.sp, // Explicit size for prominence
-                    style = MaterialTheme.typography.headlineMedium
-                )
+            // App title / welcome text
+            Text(
+                text = "Welcome To Loomina",
+                fontSize = 28.sp, // Explicit size for prominence
+                style = MaterialTheme.typography.headlineMedium
+            )
 
-                // Spacer to add vertical gap between title and button
-                Spacer(modifier = Modifier.height(32.dp))
+            // Spacer to add vertical gap between title and button
+            Spacer(modifier = Modifier.height(32.dp))
 
-                // Button that starts the app experience
-                Button(onClick = { navController.navigate(Routes.LOGIN) }) {
-                    Text(text = "Get Started")
-                }
+            // Button that starts the app experience
+            Button(onClick = { navController.navigate(Routes.LOGIN) }) {
+                Text(text = "Get Started")
             }
         }
+
     }
 }

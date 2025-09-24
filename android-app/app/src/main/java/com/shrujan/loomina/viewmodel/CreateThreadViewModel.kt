@@ -11,20 +11,14 @@ import com.shrujan.loomina.utils.ApiResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
-/**
- * UI state holder for creating a thread.
- */
+
 data class CreateThreadUiState(
     val loading: Boolean = false,
     val error: String? = null,
     val thread: ThreadResponse? = null
 )
 
-/**
- * ThreadViewModel bridges UI (Compose) with ThreadRepository.
- * - Manages createThread logic
- * - Exposes UI state (ThreadUiState)
- */
+
 class CreateThreadViewModel(
     private val repo: ThreadRepository
 ) : ViewModel() {
@@ -36,13 +30,7 @@ class CreateThreadViewModel(
     // Track running thread creation job
     private var inFlightCreate: Job? = null
 
-    /**
-     * Handles thread creation process:
-     * - Cancels any existing in-flight request
-     * - Updates state to loading
-     * - Calls repository
-     * - Updates UI state with result (success or error)
-     */
+
     fun createThread(
         threadTitle: String,
         prompt: String,

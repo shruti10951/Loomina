@@ -22,13 +22,16 @@ import com.shrujan.loomina.viewmodel.factory.HomeViewModelFactory
 fun HomeScreen(
     navController: NavController,
     innerPadding: PaddingValues,
-    viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(
-        userRepository = UserRepository(LocalContext.current)
-    )),
-    authViewModel: AuthViewModel = viewModel(factory = AuthViewModelFactory(
-        AuthRepository(LocalContext.current),
-        UserPreferences(LocalContext.current)
-    )
+    viewModel: HomeViewModel = viewModel(
+        factory = HomeViewModelFactory(
+            userRepository = UserRepository(LocalContext.current)
+        )
+    ),
+    authViewModel: AuthViewModel = viewModel(
+        factory = AuthViewModelFactory(
+            AuthRepository(LocalContext.current),
+            UserPreferences(LocalContext.current)
+        )
     )
 ) {
     val userState by viewModel.user.collectAsState()
@@ -39,58 +42,53 @@ fun HomeScreen(
         viewModel.loadUser()
     }
 
-    LoominaTheme {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
-        ) {
-            when {
-                userState != null -> {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("Welcome, ${userState!!.username}")
-                        Text("Email: ${userState!!.email}")
-                        Text("Bio: ${userState!!.bio ?: "No bio"}")
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        when {
+            userState != null -> {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text("Welcome, ${userState!!.username}")
+                    Text("Email: ${userState!!.email}")
+                    Text("Bio: ${userState!!.bio ?: "No bio"}")
 
-                        Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(20.dp))
 
-                        Button(
-                            onClick = {
-                                authViewModel.logout()
-                                navController.navigate("login") {
-                                    popUpTo(0) { inclusive = true }
-                                }
+                    Button(
+                        onClick = {
+                            authViewModel.logout()
+                            navController.navigate("login") {
+                                popUpTo(0) { inclusive = true }
                             }
-                        ) {
-                            Text("Logout")
                         }
+                    ) {
+                        Text("Logout")
+                    }
 
-                        Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                        Button(
-                            onClick = { navController.navigate("create") }
-                        ) {
-                            Text("Create")
-                        }
-
-                        Button(
-                            onClick = { navController.navigate("show-threads") }
-                        ) {
-                            Text("Show Threads")
-                        }
+                    Button(
+                        onClick = { navController.navigate("show-threads") }
+                    ) {
+                        Text("Show Threads")
                     }
                 }
-                errorState != null -> {
-                    Text("Error: $errorState")
-                }
-                else -> {
-                    CircularProgressIndicator()
-                }
+            }
+
+            errorState != null -> {
+                Text("Error: $errorState")
+            }
+
+            else -> {
+                CircularProgressIndicator()
             }
         }
+
     }
 }
