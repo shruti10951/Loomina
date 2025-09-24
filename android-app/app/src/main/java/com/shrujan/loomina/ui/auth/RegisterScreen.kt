@@ -13,6 +13,7 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
 import com.shrujan.loomina.theme.LoominaTheme
+import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.viewmodel.AuthViewModel
 import com.shrujan.loomina.viewmodel.factory.AuthViewModelFactory
 
@@ -34,10 +35,13 @@ fun RegisterScreen(
     // Navigate to home when register succeeds
     LaunchedEffect(uiState.token) {
         if (uiState.token != null) {
-            navController.navigate("home") {
-                popUpTo(0) { inclusive = true } // clear back stack
+            // when you are ready to enter the app:
+            navController.navigate(Routes.MAIN) {
+                // remove splash from back stack
+                popUpTo(Routes.SPLASH) { inclusive = true }
                 launchSingleTop = true
             }
+
         }
     }
 

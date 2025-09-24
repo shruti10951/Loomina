@@ -21,6 +21,7 @@ import com.shrujan.loomina.viewmodel.factory.HomeViewModelFactory
 @Composable
 fun HomeScreen(
     navController: NavController,
+    innerPadding: PaddingValues,
     viewModel: HomeViewModel = viewModel(factory = HomeViewModelFactory(
         userRepository = UserRepository(LocalContext.current)
     )),

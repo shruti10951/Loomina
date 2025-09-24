@@ -49,9 +49,13 @@ fun SplashScreen(
         !splashFinished -> { /* show logo */ }
         state is AuthState.Authenticated -> {
             LaunchedEffect(Unit) {
-                navController.navigate(Routes.HOME) {
-                    popUpTo(0) { inclusive = true }
+                // when you are ready to enter the app:
+                navController.navigate(Routes.MAIN) {
+                    // remove splash from back stack
+                    popUpTo(Routes.SPLASH) { inclusive = true }
+                    launchSingleTop = true
                 }
+
             }
         }
         state is AuthState.Unauthenticated -> {

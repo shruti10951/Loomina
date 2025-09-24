@@ -31,6 +31,7 @@ import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 @Composable
 fun ShowThreadsScreen(
     navController: NavController,
+    innerPadding: PaddingValues,
     viewModel: ShowThreadsViewModel = viewModel(factory = ThreadViewModelFactory(
         repository = ThreadRepository(LocalContext.current)
     )),

@@ -2,6 +2,7 @@ package com.shrujan.loomina.ui.create
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import com.shrujan.loomina.ui.navigation.Routes
 @Composable
 fun CreateScreen(
     navController: NavController,
+    innerPadding: PaddingValues
 ) {
 
     LoominaTheme {
