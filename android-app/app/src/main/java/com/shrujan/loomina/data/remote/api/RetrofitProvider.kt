@@ -36,6 +36,7 @@ class RetrofitProvider private constructor(context: Context) {
     val authApi: AuthApi = retrofit.create(AuthApi::class.java)
     val userApi: UserApi = retrofit.create(UserApi::class.java)
     val threadApi: ThreadApi = retrofit.create(ThreadApi::class.java)
+    val storyApi: StoryApi = retrofit.create(StoryApi::class.java)
 
     companion object {
         @Volatile

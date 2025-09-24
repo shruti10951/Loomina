@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.routers.v1 import user_routes
 from app.routers.v1 import auth_routes
 from app.routers.v1 import thread_routes
+from app.routers.v1 import story_routes
 
 from app.core.init_db import init_db
 
@@ -19,3 +20,4 @@ async def ping():
 app.include_router(user_routes.router, prefix="/api/v1/users", tags=["Users"])
 app.include_router(auth_routes.router, prefix="/api/v1/auth", tags=["Auth"])
 app.include_router(thread_routes.router, prefix="/api/v1/threads", tags=["Threads"])
+app.include_router(story_routes.router, prefix="/api/v1/stories", tags=["Stories"])

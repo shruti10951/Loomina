@@ -1,4 +1,47 @@
 package com.shrujan.loomina.data.repository
 
-class StoryRepository {
+import android.content.Context
+import com.shrujan.loomina.data.remote.api.RetrofitProvider
+import com.shrujan.loomina.data.remote.dto.StoryRequest
+import com.shrujan.loomina.data.remote.dto.StoryResponse
+import com.shrujan.loomina.utils.ApiResult
+import retrofit2.HttpException
+import java.io.IOException
+
+
+class StoryRepository(context: Context) {
+    private val apiProvider = RetrofitProvider.getInstance(context)
+
+    suspend fun createStory(
+        storyTitle: String,
+        storySynopsis: String,
+        coverImage: String?,
+        genre: List<String>,
+        tags: List<String>
+    ): ApiResult<StoryResponse> {
+        return try {
+            val res = apiProvider.storyApi.createStory(
+                StoryRequest(
+                    storyTitle, storySynopsis, coverImage, genre, tags
+                )
+            )
+            ApiResult.Success(res)
+        } catch (e: HttpException) {
+            ApiResult.Error(e.response()?.errorBody()?.string() ?: "HTTP ${e.code()}")
+        } catch (e: IOException) {
+            ApiResult.Error("Network error. Check your connection.")
+        } catch (e: Exception) {
+            ApiResult.Error("Unexpected error: ${e.message ?: "unknown"}")
+        }
+    }
+
+    suspend fun getMyStories(): ApiResult<List<StoryResponse>> {
+        return try {
+            val res = apiProvider.storyApi.getMyStories() // Retrofit call
+            ApiResult.Success(res)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
 }

@@ -8,13 +8,7 @@ import com.shrujan.loomina.utils.ApiResult
 import okio.IOException
 import retrofit2.HttpException
 
-/**
- * ThreadRepository handles all thread-related network operations,
- * such as creating a new thread.
- *
- * It communicates with the backend API through RetrofitProvider
- * and wraps responses in ApiResult for consistent error handling.
- */
+
 class ThreadRepository(context: Context) {
     private val apiProvider = RetrofitProvider.getInstance(context)
 

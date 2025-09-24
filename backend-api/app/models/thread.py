@@ -6,7 +6,7 @@ from typing import List
 class Thread(Document):
     threadTitle: str
     creationTime: datetime = Field(default_factory=datetime.utcnow)
-    userId: PydanticObjectId  # <-- store just ObjectId, not Link[User]
+    userId: PydanticObjectId  
     
     numberOfLikes: int = 0
     numberOfComments: int = 0

@@ -1,6 +1,5 @@
 package com.shrujan.loomina.data.remote.api
 
-import android.R
 import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import retrofit2.http.Body
