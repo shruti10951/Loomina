@@ -1,7 +1,5 @@
 package com.shrujan.loomina.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.shrujan.loomina.data.remote.dto.ThreadRequest
@@ -9,8 +7,9 @@ import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.utils.ApiResult
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
 
 data class CreateThreadUiState(
     val loading: Boolean = false,
@@ -18,18 +17,14 @@ data class CreateThreadUiState(
     val thread: ThreadResponse? = null
 )
 
-
 class CreateThreadViewModel(
     private val repo: ThreadRepository
 ) : ViewModel() {
 
-    // UI state for thread creation
-    var uiState: MutableState<CreateThreadUiState> = mutableStateOf(CreateThreadUiState())
-        private set
+    private val _uiState = MutableStateFlow(CreateThreadUiState())
+    val uiState: StateFlow<CreateThreadUiState> = _uiState
 
-    // Track running thread creation job
     private var inFlightCreate: Job? = null
-
 
     fun createThread(
         threadTitle: String,
@@ -38,19 +33,18 @@ class CreateThreadViewModel(
         genre: List<String>,
         tags: List<String>
     ) {
-        if (uiState.value.loading) return
+        if (_uiState.value.loading) return
 
-        val request = ThreadRequest(threadTitle, prompt, coverImage, genre, tags).sanitized()
-        if (!request.isValid()) {
-            uiState.value = CreateThreadUiState(
-                loading = false,
-                error = "Please fill all required fields correctly."
-            )
+        val request = ThreadRequest(threadTitle, prompt, coverImage, genre, tags)
+
+        // Example validation
+        if (threadTitle.isBlank() || prompt.isBlank()) {
+            _uiState.value = CreateThreadUiState(error = "Please fill all required fields.")
             return
         }
 
         inFlightCreate?.cancel()
-        uiState.value = CreateThreadUiState(loading = true)
+        _uiState.value = CreateThreadUiState(loading = true)
 
         inFlightCreate = viewModelScope.launch {
             when (val result = repo.createThread(
@@ -61,14 +55,13 @@ class CreateThreadViewModel(
                 request.tags
             )) {
                 is ApiResult.Success -> {
-                    uiState.value = CreateThreadUiState(
+                    _uiState.value = CreateThreadUiState(
                         loading = false,
-                        thread = result.data,
-                        error = null
+                        thread = result.data
                     )
                 }
                 is ApiResult.Error -> {
-                    uiState.value = CreateThreadUiState(
+                    _uiState.value = CreateThreadUiState(
                         loading = false,
                         error = result.message
                     )
@@ -77,4 +70,7 @@ class CreateThreadViewModel(
         }
     }
 
+    fun resetState() {
+        _uiState.value = CreateThreadUiState()
+    }
 }

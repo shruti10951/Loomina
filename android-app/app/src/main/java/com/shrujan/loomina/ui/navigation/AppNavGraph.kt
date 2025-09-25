@@ -8,7 +8,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.shrujan.loomina.ui.create.CreateStoryScreen
 import com.shrujan.loomina.ui.create.CreateThreadScreen
-import com.shrujan.loomina.ui.ShowThreadsScreen
 import com.shrujan.loomina.ui.auth.LoginScreen
 import com.shrujan.loomina.ui.auth.RegisterScreen
 import com.shrujan.loomina.ui.create.CreateScreen
@@ -50,9 +49,7 @@ fun AppNavGraph(navController: NavHostController, innerPadding: PaddingValues) {
             // screens reachable from main (kept inside main so back behavior is consistent)
             composable(Routes.THREAD) { CreateThreadScreen(navController = navController) }
             composable(Routes.STORY) { CreateStoryScreen(navController = navController) }
-            composable(Routes.SHOW_THREADS) {
-                ShowThreadsScreen(navController = navController, innerPadding = innerPadding)
-            }
+
         }
     }
 }

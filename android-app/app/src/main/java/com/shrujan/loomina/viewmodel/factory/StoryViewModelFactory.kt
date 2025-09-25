@@ -3,6 +3,7 @@ package com.shrujan.loomina.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.StoryRepository
+import com.shrujan.loomina.viewmodel.CreateStoryViewModel
 import com.shrujan.loomina.viewmodel.StoryViewModel
 
 class StoryViewModelFactory(
@@ -14,6 +15,8 @@ class StoryViewModelFactory(
         return when {
             modelClass.isAssignableFrom(StoryViewModel::class.java) ->
                 StoryViewModel(repository) as T
+            modelClass.isAssignableFrom(CreateStoryViewModel::class.java) ->
+                CreateStoryViewModel(repository) as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

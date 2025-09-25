@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.viewmodel.CreateThreadViewModel
-import com.shrujan.loomina.viewmodel.ShowThreadsViewModel
 import com.shrujan.loomina.viewmodel.ThreadViewModel
 
 class ThreadViewModelFactory(
@@ -15,8 +14,6 @@ class ThreadViewModelFactory(
         return when {
             modelClass.isAssignableFrom(CreateThreadViewModel::class.java) ->
                 CreateThreadViewModel(repository) as T
-            modelClass.isAssignableFrom(ShowThreadsViewModel::class.java) ->
-                ShowThreadsViewModel(repository) as T
             modelClass.isAssignableFrom(ThreadViewModel::class.java) ->
                 ThreadViewModel(repository) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")

@@ -16,5 +16,4 @@ object Routes {
     const val PROFILE = "profile"
     const val THREAD = "thread"
     const val STORY = "story"
-    const val SHOW_THREADS = "show-threads"
 }

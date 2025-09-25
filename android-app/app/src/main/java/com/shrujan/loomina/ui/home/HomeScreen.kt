@@ -12,7 +12,6 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
 import com.shrujan.loomina.data.repository.UserRepository
-import com.shrujan.loomina.theme.LoominaTheme
 import com.shrujan.loomina.viewmodel.AuthViewModel
 import com.shrujan.loomina.viewmodel.HomeViewModel
 import com.shrujan.loomina.viewmodel.factory.AuthViewModelFactory
@@ -73,11 +72,6 @@ fun HomeScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Button(
-                        onClick = { navController.navigate("show-threads") }
-                    ) {
-                        Text("Show Threads")
-                    }
                 }
             }
 

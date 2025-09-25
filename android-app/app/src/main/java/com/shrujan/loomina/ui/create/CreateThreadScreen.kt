@@ -1,5 +1,7 @@
 package com.shrujan.loomina.ui.create
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
@@ -11,31 +13,32 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.navigation.NavController
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.shrujan.loomina.R
-import com.shrujan.loomina.viewmodel.CreateThreadViewModel
-import androidx.compose.ui.platform.LocalContext
-
-import android.util.Log
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import coil.compose.AsyncImage
+import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
-import coil.request.ErrorResult
+import com.shrujan.loomina.R
 import com.shrujan.loomina.data.repository.ThreadRepository
+import com.shrujan.loomina.viewmodel.CreateThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
-
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CreateThreadScreen(
     navController: NavController,
-    viewModel: CreateThreadViewModel = viewModel(factory = ThreadViewModelFactory(
-        repository = ThreadRepository(LocalContext.current)
-    ))
+    viewModel: CreateThreadViewModel = viewModel(
+        factory = ThreadViewModelFactory(
+            repository = ThreadRepository(LocalContext.current)
+        )
+    )
 ) {
+    val context = LocalContext.current
+
     var threadTitle by remember { mutableStateOf("") }
     var prompt by remember { mutableStateOf("") }
     var coverImageUrl by remember { mutableStateOf("") }
@@ -47,13 +50,27 @@ fun CreateThreadScreen(
     var currentTag by remember { mutableStateOf("") }
 
     // Observe ViewModel state
-    val uiState = viewModel.uiState.value
+    val uiState by viewModel.uiState.collectAsState()
 
     val isFormValid = threadTitle.trim().isNotEmpty() &&
             prompt.trim().isNotEmpty() &&
             selectedGenres.isNotEmpty() &&
             tags.isNotEmpty()
 
+    // 🔔 Toast for errors (one-time)
+    uiState.error?.let { errorMsg ->
+        LaunchedEffect(errorMsg) {
+            Toast.makeText(context, "Error: $errorMsg", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    // 🔔 Toast for success (one-time)
+    uiState.thread?.let { createdThread ->
+        LaunchedEffect(createdThread) {
+            Toast.makeText(context, "Thread created successfully!", Toast.LENGTH_SHORT).show()
+            navController.popBackStack() // go back after success
+        }
+    }
 
     Scaffold { innerPadding ->
         Column(
@@ -98,10 +115,10 @@ fun CreateThreadScreen(
                 ) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(coverImageUrl.trim()) //  use user-entered link
+                            .data(coverImageUrl.trim())
                             .crossfade(true)
-                            .placeholder(R.drawable.placeholder)   //  loading state
-                            .error(R.drawable.image_error)         //  fallback if fails
+                            .placeholder(R.drawable.placeholder)
+                            .error(R.drawable.image_error)
                             .listener(
                                 onSuccess = { _: ImageRequest, _: SuccessResult ->
                                     Log.d("CoilDebug", "Image loaded successfully")
@@ -117,7 +134,6 @@ fun CreateThreadScreen(
                     )
                 }
             }
-
 
             // Genre Chips
             Text("Select Genres")
@@ -168,7 +184,7 @@ fun CreateThreadScreen(
                 tags.forEach { tag ->
                     InputChip(
                         selected = false,
-                        onClick = { /* Future: maybe selectable tags */ },
+                        onClick = { },
                         label = { Text(tag) },
                         trailingIcon = {
                             IconButton(onClick = { tags.remove(tag) }) {
@@ -200,24 +216,6 @@ fun CreateThreadScreen(
                     )
                 } else {
                     Text("Create Thread")
-                }
-            }
-
-            // Handle errors
-            if (uiState.error != null) {
-                Text(
-                    text = "Error: ${uiState.error}",
-                    color = MaterialTheme.colorScheme.error
-                )
-            }
-
-            // Handle success
-            uiState.thread?.let { createdThread ->
-                Text("Thread created: ${createdThread.threadTitle}")
-
-                // Navigate away after success (optional)
-                LaunchedEffect(createdThread) {
-                    navController.popBackStack() // go back to previous screen
                 }
             }
         }
