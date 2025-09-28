@@ -6,7 +6,7 @@ import com.shrujan.loomina.data.remote.dto.LoginRequest
 import com.shrujan.loomina.data.remote.dto.RegisterRequest
 import com.shrujan.loomina.data.remote.dto.TokenResponse
 import com.shrujan.loomina.utils.ApiResult
-import okio.IOException
+import java.io.IOException
 import retrofit2.HttpException
 
 /**

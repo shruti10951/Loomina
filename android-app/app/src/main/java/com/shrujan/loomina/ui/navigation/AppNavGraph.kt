@@ -1,11 +1,14 @@
 package com.shrujan.loomina.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
+import androidx.navigation.navArgument
 import com.shrujan.loomina.ui.create.CreateStoryScreen
 import com.shrujan.loomina.ui.create.CreateThreadScreen
 import com.shrujan.loomina.ui.auth.LoginScreen
@@ -15,6 +18,7 @@ import com.shrujan.loomina.ui.explore.ExploreScreen
 import com.shrujan.loomina.ui.home.HomeScreen
 import com.shrujan.loomina.ui.library.LibraryScreen
 import com.shrujan.loomina.ui.profile.ProfileScreen
+import com.shrujan.loomina.ui.spark.AddSparksScreen
 import com.shrujan.loomina.ui.welcome.SplashScreen
 import com.shrujan.loomina.ui.welcome.WelcomeScreen
 
@@ -49,6 +53,29 @@ fun AppNavGraph(navController: NavHostController, innerPadding: PaddingValues) {
             // screens reachable from main (kept inside main so back behavior is consistent)
             composable(Routes.THREAD) { CreateThreadScreen(navController = navController) }
             composable(Routes.STORY) { CreateStoryScreen(navController = navController) }
+
+            composable(
+                route = Routes.CREATE_SPARK,
+                arguments = listOf(navArgument("threadId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val threadId = backStackEntry.arguments?.getString("threadId") ?: ""
+                AddSparksScreen(
+                    navController = navController,
+                    innerPadding = innerPadding,
+                    threadId = threadId,
+                    onSparkAdded = {
+                        Log.d("Spark", "Created")
+                    }
+                )
+            }
+
+
+            // FOR TESTING ONLY
+            composable("test_spark") {
+                AddSparksScreen()
+            }
+
+
 
         }
     }

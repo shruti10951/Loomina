@@ -1,4 +1,35 @@
 package com.shrujan.loomina.data.repository
 
-class SparkRepository {
+import android.content.Context
+import com.shrujan.loomina.data.remote.api.RetrofitProvider
+import com.shrujan.loomina.data.remote.dto.SparkRequest
+import com.shrujan.loomina.data.remote.dto.SparkResponse
+import com.shrujan.loomina.utils.ApiResult
+import retrofit2.HttpException
+import java.io.IOException
+
+class SparkRepository(context: Context) {
+    private val apiProvider = RetrofitProvider.getInstance(context)
+
+    suspend fun createSpark(
+        threadId: String,
+        sparkText: String,
+        previousSparkId: String? = null,
+        isStart: Boolean = false,
+        isSensitive: Boolean = false
+    ): ApiResult<SparkResponse> {
+        return try {
+            val res = apiProvider.sparkApi.createSpark(
+                threadId = threadId,
+                body = SparkRequest(sparkText, previousSparkId, isStart, isSensitive)
+            )
+            ApiResult.Success(res)
+        } catch (e: HttpException) {
+            ApiResult.Error(e.response()?.errorBody()?.string() ?: "HTTP ${e.code()}")
+        } catch (e: IOException) {
+            ApiResult.Error("Network error. Check your connection.")
+        } catch (e: Exception) {
+            ApiResult.Error("Unexpected error: ${e.message ?: "unknown"}")
+        }
+    }
 }

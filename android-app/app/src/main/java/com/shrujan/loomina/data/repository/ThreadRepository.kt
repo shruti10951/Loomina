@@ -5,7 +5,7 @@ import com.shrujan.loomina.data.remote.api.RetrofitProvider
 import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import com.shrujan.loomina.utils.ApiResult
-import okio.IOException
+import java.io.IOException
 import retrofit2.HttpException
 
 

@@ -4,7 +4,7 @@ import android.content.Context
 import com.shrujan.loomina.data.remote.api.RetrofitProvider
 import com.shrujan.loomina.data.remote.dto.UserResponse
 import com.shrujan.loomina.utils.ApiResult
-import okio.IOException
+import java.io.IOException
 import retrofit2.HttpException
 
 /**

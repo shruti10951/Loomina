@@ -37,6 +37,8 @@ async def create_thread(
     )
     await thread.insert()
 
+    print(thread.id)
+
     return ThreadResponseSchema(
         _id=str(thread.id),
         threadTitle=thread.threadTitle,

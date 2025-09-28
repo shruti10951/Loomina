@@ -24,6 +24,7 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
 import com.shrujan.loomina.data.repository.ThreadRepository
+import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.viewmodel.CreateThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
@@ -66,9 +67,13 @@ fun CreateThreadScreen(
 
     // 🔔 Toast for success (one-time)
     uiState.thread?.let { createdThread ->
-        LaunchedEffect(createdThread) {
+        LaunchedEffect(createdThread.id) {
             Toast.makeText(context, "Thread created successfully!", Toast.LENGTH_SHORT).show()
-            navController.popBackStack() // go back after success
+            val threadId = createdThread.id
+            navController.navigate(Routes.createSpark(threadId)) {
+                launchSingleTop = true
+            }
+            viewModel.resetState() // reset the state to avoid repeated navigation
         }
     }
 

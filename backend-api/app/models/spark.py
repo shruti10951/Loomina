@@ -1,14 +1,12 @@
-from beanie import Document, Link
+from beanie import Document, PydanticObjectId
 from pydantic import Field
 from datetime import datetime
 from typing import List, Optional
 
-from app.models.user import User
-from app.models.thread import Thread
 
 class Spark(Document):
-    threadId: Link[Thread]
-    userId: Link[User]
+    threadId: PydanticObjectId
+    userId: PydanticObjectId
 
     sparkText: str
     creationTime: datetime = Field(default_factory=datetime.utcnow)

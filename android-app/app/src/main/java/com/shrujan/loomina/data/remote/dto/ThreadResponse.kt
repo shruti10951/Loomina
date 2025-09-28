@@ -1,7 +1,9 @@
 package com.shrujan.loomina.data.remote.dto
 
+import com.google.gson.annotations.SerializedName
+
 data class ThreadResponse(
-    val id: String,
+    @SerializedName("_id") val id: String,
     val threadTitle: String,
     val prompt: String,
     val creationTime: String,

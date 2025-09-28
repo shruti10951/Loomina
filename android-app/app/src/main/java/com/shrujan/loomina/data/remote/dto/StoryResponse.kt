@@ -1,7 +1,9 @@
 package com.shrujan.loomina.data.remote.dto
 
+import com.google.gson.annotations.SerializedName
+
 data class StoryResponse(
-    val id: String,
+    @SerializedName("_id") val id: String,
     val storyTitle: String,
     val storySynopsis: String,
     val creationTime: String,

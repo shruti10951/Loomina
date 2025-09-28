@@ -16,4 +16,8 @@ object Routes {
     const val PROFILE = "profile"
     const val THREAD = "thread"
     const val STORY = "story"
+
+    const val CREATE_SPARK = "create_spark/{threadId}"
+    // helper to build a concrete route
+    fun createSpark(threadId: String) = "create_spark/$threadId"
 }

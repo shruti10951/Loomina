@@ -61,10 +61,13 @@ fun HomeScreen(
 
                     Button(
                         onClick = {
-                            authViewModel.logout()
-                            navController.navigate("login") {
-                                popUpTo(0) { inclusive = true }
-                            }
+//                            authViewModel.logout()
+//                            navController.navigate("login") {
+//                                popUpTo(0) { inclusive = true }
+//                            }
+
+                            // FOR TESTING ONLY
+                            navController.navigate("test_spark")
                         }
                     ) {
                         Text("Logout")

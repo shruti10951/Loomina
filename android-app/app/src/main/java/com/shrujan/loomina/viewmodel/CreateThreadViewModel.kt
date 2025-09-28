@@ -37,7 +37,7 @@ class CreateThreadViewModel(
 
         val request = ThreadRequest(threadTitle, prompt, coverImage, genre, tags)
 
-        // Example validation
+        // Validation
         if (threadTitle.isBlank() || prompt.isBlank()) {
             _uiState.value = CreateThreadUiState(error = "Please fill all required fields.")
             return

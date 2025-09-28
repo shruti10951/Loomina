@@ -28,7 +28,7 @@ class RetrofitProvider private constructor(context: Context) {
     private val gson = GsonBuilder().create()
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.1.103:8000/") // change for prod
+        .baseUrl("http://192.168.1.104:8000/") // change for prod
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(client)
         .build()
@@ -37,6 +37,7 @@ class RetrofitProvider private constructor(context: Context) {
     val userApi: UserApi = retrofit.create(UserApi::class.java)
     val threadApi: ThreadApi = retrofit.create(ThreadApi::class.java)
     val storyApi: StoryApi = retrofit.create(StoryApi::class.java)
+    val sparkApi: SparkApi = retrofit.create(SparkApi::class.java)
 
     companion object {
         @Volatile
