@@ -86,3 +86,42 @@ async def get_my_threads(current_user: User = Depends(get_current_user)):
             )
         )
     return results
+
+
+# ---------------------------
+# Get Thread by ID
+# ---------------------------
+@router.get("/{thread_id}", response_model=ThreadResponseSchema)
+async def get_thread_by_id(thread_id: str, current_user: User = Depends(get_current_user)):
+    try:
+        thread_obj_id = PydanticObjectId(thread_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid thread ID format")
+
+    thread = await Thread.get(thread_obj_id)
+    if not thread:
+        raise HTTPException(status_code=404, detail="Thread not found")
+
+    # Fetch user info for the thread creator
+    thread_user = await User.get(thread.userId)
+    if not thread_user:
+        raise HTTPException(status_code=404, detail="Thread creator not found")
+
+    return ThreadResponseSchema(
+        _id=str(thread.id),
+        threadTitle=thread.threadTitle,
+        prompt=thread.prompt,
+        creationTime=thread.creationTime,
+        user={
+            "_id": str(thread_user.id),
+            "username": thread_user.username,
+            "userProfileImage": thread_user.userProfileImage,
+        },
+        numberOfLikes=thread.numberOfLikes,
+        numberOfComments=thread.numberOfComments,
+        likedBy=thread.likedBy,
+        coverImage=thread.coverImage,
+        genre=thread.genre,
+        tags=thread.tags,
+        reportCount=thread.reportCount,
+    )

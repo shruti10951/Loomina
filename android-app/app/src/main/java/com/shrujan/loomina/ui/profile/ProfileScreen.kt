@@ -14,6 +14,7 @@ import com.shrujan.loomina.data.repository.StoryRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.data.repository.UserRepository
 import com.shrujan.loomina.theme.LoominaTheme
+import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.viewmodel.StoryViewModel
 import com.shrujan.loomina.viewmodel.ThreadViewModel
 import com.shrujan.loomina.viewmodel.UserViewModel
@@ -92,7 +93,8 @@ fun ProfileScreen(
                                 threads = myThreads,
                                 error = threadError
                             ) {
-                                // TODO: navigate to thread detail
+                                thread ->
+                                navController.navigate(Routes.createSpark(thread.id))
                             }
                         } else {
                             ProfileStoriesSection(

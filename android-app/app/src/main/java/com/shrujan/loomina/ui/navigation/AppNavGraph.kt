@@ -54,25 +54,14 @@ fun AppNavGraph(navController: NavHostController, innerPadding: PaddingValues) {
             composable(Routes.THREAD) { CreateThreadScreen(navController = navController) }
             composable(Routes.STORY) { CreateStoryScreen(navController = navController) }
 
-            composable(
-                route = Routes.CREATE_SPARK,
-                arguments = listOf(navArgument("threadId") { type = NavType.StringType })
-            ) { backStackEntry ->
+
+            composable(Routes.CREATE_SPARK) { backStackEntry ->
                 val threadId = backStackEntry.arguments?.getString("threadId") ?: ""
                 AddSparksScreen(
                     navController = navController,
-                    innerPadding = innerPadding,
                     threadId = threadId,
-                    onSparkAdded = {
-                        Log.d("Spark", "Created")
-                    }
+                    innerPadding = innerPadding
                 )
-            }
-
-
-            // FOR TESTING ONLY
-            composable("test_spark") {
-                AddSparksScreen()
             }
 
 

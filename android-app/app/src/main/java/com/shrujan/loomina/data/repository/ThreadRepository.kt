@@ -42,4 +42,14 @@ class ThreadRepository(context: Context) {
         }
     }
 
+    suspend fun getThreadById(threadId: String): ApiResult<ThreadResponse> {
+        return try {
+            val response = apiProvider.threadApi.getThreadById(threadId)
+            ApiResult.Success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
+
 }

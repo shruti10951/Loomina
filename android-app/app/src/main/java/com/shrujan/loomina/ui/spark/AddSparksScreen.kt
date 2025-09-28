@@ -15,22 +15,38 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.shrujan.loomina.data.repository.SparkRepository
+import com.shrujan.loomina.data.repository.ThreadRepository
+import com.shrujan.loomina.ui.thread.ThreadHeader
 import com.shrujan.loomina.viewmodel.CreateSparkViewModel
+import com.shrujan.loomina.viewmodel.ThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.SparkViewModelFactory
+import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
 @Composable
 fun AddSparksScreen(
     navController: NavController? = null, // optional for testing
-    innerPadding: PaddingValues = PaddingValues(16.dp),
-    threadId: String = "68c3f8b9c6c704fc8c60d4f8", // hardcoded for testing
+    innerPadding: PaddingValues,
+    threadId: String,
     createSparkViewModel: CreateSparkViewModel = viewModel(
         factory = SparkViewModelFactory(
             repository = SparkRepository(LocalContext.current)
         )
     ),
+    threadViewModel: ThreadViewModel = viewModel(
+        factory = ThreadViewModelFactory(
+            repository = ThreadRepository(LocalContext.current))
+    ),
     onSparkAdded: () -> Unit = {}
 ) {
     val uiState by createSparkViewModel.uiState.collectAsState()
+
+    val thread by threadViewModel.thread.collectAsState()
+    val threadError by threadViewModel.error.collectAsState()
+
+    // fetch thread when screen loads
+    LaunchedEffect(threadId) {
+        threadViewModel.getThreadById(threadId)
+    }
 
     // Local list of spark items
     var sparkItems by remember {
@@ -41,8 +57,22 @@ fun AddSparksScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
+
+        // Thread header on top
+        item {
+            when {
+                threadError != null -> Text(
+                    text = threadError!!,
+                    color = MaterialTheme.colorScheme.error
+                )
+                thread == null -> Text("Loading thread…")
+                else -> ThreadHeader(thread = thread!!)
+            }
+        }
+
+        // Spark list
         items(sparkItems) { item ->
             when (item) {
                 is SparkUiItem.Spark -> {
