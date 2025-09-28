@@ -3,8 +3,14 @@ from beanie import PydanticObjectId
 
 from app.models.thread import Thread
 from app.models.user import User
+from app.models.spark import Spark
+
 from app.schemas.thread import CreateThreadSchema, ThreadResponseSchema
+from app.schemas.spark import SparkResponseSchema
+
 from app.utils.security import get_current_user
+from app.services.thread_service import get_ordered_sparks
+
 
 from typing import List
 
@@ -125,3 +131,62 @@ async def get_thread_by_id(thread_id: str, current_user: User = Depends(get_curr
         tags=thread.tags,
         reportCount=thread.reportCount,
     )
+
+
+# ---------------------------
+# Get Ordered Sparks for a Thread
+# ---------------------------
+@router.get("/{thread_id}/sparks/ordered", response_model=List[SparkResponseSchema])
+async def fetch_ordered_sparks(
+    thread_id: str,
+    current_user: User = Depends(get_current_user)
+):
+    try:
+        thread_obj_id = PydanticObjectId(thread_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid thread ID format")
+    
+    # get ordered sparks from service
+    ordered_sparks: List[Spark] = await get_ordered_sparks(thread_obj_id)
+
+    # enrich author info for each spark
+    user_ids = list({str(s.userId) for s in ordered_sparks})
+    user_ids_obj = [PydanticObjectId(uid) for uid in user_ids]
+
+    users_map = {}
+    if user_ids_obj:
+        users = await User.find({"_id": {"$in": user_ids_obj}}).to_list()
+        users_map = {str(u.id): u for u in users}
+
+    # Build response list
+    response = []
+    for s in ordered_sparks:
+        u = users_map.get(str(s.userId))
+
+        response.append(
+            SparkResponseSchema(
+                _id = str(s.id),
+                threadId = str(s.threadId),
+                user = {
+                    "_id" : str(s.userId),
+                    "username" : u.username if u else "",
+                    "userProfileImage" : u.userProfileImage if u else ""
+                },
+                sparkText = s.sparkText,
+                creationTime= s.creationTime,
+                numberOfLikes= s.numberOfLikes,
+                numberOfComments= s.numberOfComments,
+                likedBy= s.likedBy,
+                previousSparkId= s.previousSparkId,
+                isStart= s.isStart,
+                isReported= s.isReported,
+                isDeleted= s.isDeleted,
+                isSensitive= s.isSensitive,
+                isEdited= s.isEdited,
+                reportCount= s.reportCount
+            )
+        )
+    
+    return response
+
+

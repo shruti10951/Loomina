@@ -1,5 +1,8 @@
 from fastapi import HTTPException
 from beanie import PydanticObjectId 
+
+from typing import List
+
 from app.models.spark import Spark
 from app.models.thread import Thread
 
@@ -11,9 +14,6 @@ async def validate_and_create_spark(
         isStart: bool = False,
         isSensitive: bool = False
 ) -> Spark :
-    
-    print(previousSparkId)
-    print(isStart)
     
     # 1. Ensure thread exists
     thread = await Thread.get(threadId)
@@ -59,3 +59,7 @@ async def validate_and_create_spark(
     )
     await spark.insert()
     return spark
+
+
+
+

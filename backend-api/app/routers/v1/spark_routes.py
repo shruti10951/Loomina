@@ -1,10 +1,14 @@
-from app.services.spark_service import validate_and_create_spark
 from fastapi import APIRouter, HTTPException, Depends
 from beanie import PydanticObjectId
 
 
 from app.schemas.spark import CreateSparkSchema, SparkResponseSchema
+from app.services.spark_service import validate_and_create_spark
+
+
+from app.models.spark import Spark
 from app.models.user import User
+
 from app.utils.security import get_current_user
 
 # Initialize API Router
@@ -50,3 +54,6 @@ async def create_spark(
     isEdited=spark.isEdited,
     reportCount=spark.reportCount,
 )
+
+
+
