@@ -70,7 +70,7 @@ fun CreateThreadScreen(
         LaunchedEffect(createdThread.id) {
             Toast.makeText(context, "Thread created successfully!", Toast.LENGTH_SHORT).show()
             val threadId = createdThread.id
-            navController.navigate(Routes.createSpark(threadId)) {
+            navController.navigate(Routes.extendSpark(threadId, "")) {
                 launchSingleTop = true
             }
             viewModel.resetState() // reset the state to avoid repeated navigation

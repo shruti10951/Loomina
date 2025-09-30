@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.shrujan.loomina.data.repository.ThreadRepository
+import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.ui.spark.SparkItem
 import com.shrujan.loomina.viewmodel.ThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
@@ -63,7 +64,12 @@ fun ThreadDetailsScreen (
 
         // Sparks list
         items(sparks) { spark ->
-            SparkItem(spark = spark)
+            SparkItem(
+                spark = spark,
+                onExtendClick = {
+                    navController.navigate(Routes.extendSpark(threadId, spark.id))
+                }
+            )
         }
     }
 }

@@ -3,7 +3,7 @@ package com.shrujan.loomina.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.SparkRepository
-import com.shrujan.loomina.viewmodel.CreateSparkViewModel
+import com.shrujan.loomina.viewmodel.SparkViewModel
 
 
 class SparkViewModelFactory(
@@ -13,8 +13,8 @@ class SparkViewModelFactory(
     @Suppress("UNCHECKED_CAST") // Suppresses unchecked cast warning since we validate the class type.
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         return when {
-            modelClass.isAssignableFrom(CreateSparkViewModel::class.java) ->
-                CreateSparkViewModel(repository) as T
+            modelClass.isAssignableFrom(SparkViewModel::class.java) ->
+                SparkViewModel(repository) as T
 
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

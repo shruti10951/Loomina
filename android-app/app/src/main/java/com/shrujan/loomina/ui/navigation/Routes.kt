@@ -17,9 +17,9 @@ object Routes {
     const val CREATE_THREAD = "create-thread"
     const val CREATE_STORY = "create-story"
 
-    const val CREATE_SPARK = "create_spark/{threadId}"
-    fun createSpark(threadId: String) = "create_spark/$threadId"
-
     const val THREAD_DETAILS = "thread-details/{threadId}"
     fun showThreadDetails(threadId: String) = "thread-details/$threadId"
+
+    const val EXTEND_SPARK = "extend_spark/{threadId}/{currentSparkId}"
+    fun extendSpark(threadId: String, currentSparkId: String) = "extend_spark/$threadId/$currentSparkId"
 }

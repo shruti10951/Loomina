@@ -32,4 +32,14 @@ class SparkRepository(context: Context) {
             ApiResult.Error("Unexpected error: ${e.message ?: "unknown"}")
         }
     }
+
+    suspend fun getSparkById(sparkId: String): ApiResult<SparkResponse> {
+        return try {
+            val response = apiProvider.sparkApi.getSparkById(sparkId)
+            ApiResult.Success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
 }

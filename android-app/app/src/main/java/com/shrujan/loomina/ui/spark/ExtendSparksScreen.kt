@@ -17,17 +17,18 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.thread.ThreadHeader
-import com.shrujan.loomina.viewmodel.CreateSparkViewModel
+import com.shrujan.loomina.viewmodel.SparkViewModel
 import com.shrujan.loomina.viewmodel.ThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.SparkViewModelFactory
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
 @Composable
-fun AddSparksScreen(
-    navController: NavController? = null, // optional for testing
+fun ExtendSparksScreen(
+    navController: NavController,
     innerPadding: PaddingValues,
     threadId: String,
-    createSparkViewModel: CreateSparkViewModel = viewModel(
+    currentSparkId: String,
+    sparkViewModel: SparkViewModel = viewModel(
         factory = SparkViewModelFactory(
             repository = SparkRepository(LocalContext.current)
         )
@@ -36,22 +37,19 @@ fun AddSparksScreen(
         factory = ThreadViewModelFactory(
             repository = ThreadRepository(LocalContext.current))
     ),
-    onSparkAdded: () -> Unit = {}
 ) {
-    val uiState by createSparkViewModel.uiState.collectAsState()
 
     val thread by threadViewModel.thread.collectAsState()
     val threadError by threadViewModel.error.collectAsState()
 
+    val currentSpark by sparkViewModel.spark.collectAsState()
+
     // fetch thread when screen loads
     LaunchedEffect(threadId) {
         threadViewModel.getThreadById(threadId)
+        sparkViewModel.getSparkById(currentSparkId)
     }
 
-    // Local list of spark items
-    var sparkItems by remember {
-        mutableStateOf<List<SparkUiItem>>(listOf(SparkUiItem.Composer(parentId = null)))
-    }
 
     LazyColumn(
         modifier = Modifier
@@ -72,59 +70,15 @@ fun AddSparksScreen(
             }
         }
 
-        // Spark list
-        items(sparkItems) { item ->
-            when (item) {
-                is SparkUiItem.Spark -> {
-                    SparkItem(
-                        spark = item.data,
-                        onLikeClick = { /* TODO */ },
-                        onCommentClick = { /* TODO */ },
-                        onExtendClick = {
-                            // Add composer below this spark
-                            sparkItems = sparkItems.toMutableList().apply {
-                                val idx = indexOf(item)
-                                add(idx + 1, SparkUiItem.Composer(parentId = item.data.id))
-                            }
-                        }
-                    )
-                }
-
-                is SparkUiItem.Composer -> {
-                    SparkComposer(
-                        onPost = { text, isSensitive ->
-                            createSparkViewModel.createSpark(
-                                threadId = threadId,
-                                sparkText = text,
-                                isSensitive = isSensitive,
-                                previousSparkId = item.parentId
-                            )
-                        }
-                    )
-                }
+        item {
+            when {
+                currentSpark == null -> Text("Loading current spark...")
+                else -> SparkItem(
+                    spark = currentSpark!!
+                )
             }
         }
+
     }
 
-    // Handle success → replace composer with spark
-    uiState.spark?.let { newSpark ->
-        LaunchedEffect(newSpark.id) {
-            sparkItems = sparkItems.map { item ->
-                if (item is SparkUiItem.Composer && item.parentId == newSpark.previousSparkId) {
-                    SparkUiItem.Spark(newSpark)
-                } else item
-            }
-            onSparkAdded()
-            createSparkViewModel.resetState()
-        }
-    }
-
-    // Show global error (if any)
-    uiState.error?.let { errorMsg ->
-        Text(
-            text = errorMsg,
-            color = MaterialTheme.colorScheme.error,
-            modifier = Modifier.padding(16.dp)
-        )
-    }
 }

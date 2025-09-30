@@ -11,18 +11,18 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-data class CreateSparkUiState(
+data class SparkUiState(
     val loading: Boolean = false,
     val error: String? = null,
     val spark: SparkResponse? = null
 )
 
-class CreateSparkViewModel(
+class SparkViewModel(
     private val repository: SparkRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(CreateSparkUiState())
-    val uiState: StateFlow<CreateSparkUiState> = _uiState
+    private val _uiState = MutableStateFlow(SparkUiState())
+    val uiState: StateFlow<SparkUiState> = _uiState
 
     private var inFlightCreate: Job? = null
 
@@ -45,12 +45,12 @@ class CreateSparkViewModel(
 
         // Validation
         if (sparkText.isBlank()) {
-            _uiState.value = CreateSparkUiState(error = "Please provide spark text to post.")
+            _uiState.value = SparkUiState(error = "Please provide spark text to post.")
             return
         }
 
         inFlightCreate?.cancel()
-        _uiState.value = CreateSparkUiState(loading = true)
+        _uiState.value = SparkUiState(loading = true)
 
         inFlightCreate = viewModelScope.launch {
             when (val result = repository.createSpark(
@@ -61,14 +61,14 @@ class CreateSparkViewModel(
                 request.isSensitive
             )) {
                 is ApiResult.Success -> {
-                    _uiState.value = CreateSparkUiState(
+                    _uiState.value = SparkUiState(
                         loading = false,
                         spark = result.data
                     )
                 }
 
                 is ApiResult.Error -> {
-                    _uiState.value = CreateSparkUiState(
+                    _uiState.value = SparkUiState(
                         loading = false,
                         error = result.message
                     )
@@ -77,7 +77,25 @@ class CreateSparkViewModel(
         }
     }
 
+    private val _spark = MutableStateFlow<SparkResponse?>(null)
+    val spark: StateFlow<SparkResponse?> =_spark
+
+    private val _error = MutableStateFlow<String?>(null)
+    val err0r: StateFlow<String?> = _error
+
+
+    fun getSparkById(
+        sparkId: String
+    ) {
+        viewModelScope.launch {
+            when (val result = repository.getSparkById(sparkId)) {
+                is ApiResult.Success -> _spark.value = result.data
+                is ApiResult.Error -> _error.value = result.message
+            }
+        }
+    }
+
     fun resetState() {
-        _uiState.value = CreateSparkUiState()
+        _uiState.value = SparkUiState()
     }
 }
