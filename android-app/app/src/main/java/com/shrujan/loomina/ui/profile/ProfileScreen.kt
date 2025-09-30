@@ -13,7 +13,6 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.repository.StoryRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.data.repository.UserRepository
-import com.shrujan.loomina.theme.LoominaTheme
 import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.viewmodel.StoryViewModel
 import com.shrujan.loomina.viewmodel.ThreadViewModel
@@ -39,7 +38,7 @@ fun ProfileScreen(
     val user by userViewModel.userState.collectAsState()
     val userError by userViewModel.error.collectAsState()
 
-    val myThreads by threadViewModel.threads.collectAsState()
+    val myThreads by threadViewModel.myThreads.collectAsState()
     val threadError by threadViewModel.error.collectAsState()
 
     val myStories by storyViewModel.stories.collectAsState()
@@ -94,7 +93,7 @@ fun ProfileScreen(
                                 error = threadError
                             ) {
                                 thread ->
-                                navController.navigate(Routes.createSpark(thread.id))
+                                navController.navigate(Routes.showThreadDetails(thread.id))
                             }
                         } else {
                             ProfileStoriesSection(

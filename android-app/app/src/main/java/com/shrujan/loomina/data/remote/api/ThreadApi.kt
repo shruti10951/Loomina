@@ -1,5 +1,6 @@
 package com.shrujan.loomina.data.remote.api
 
+import com.shrujan.loomina.data.remote.dto.SparkResponse
 import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import retrofit2.http.Body
@@ -17,5 +18,8 @@ interface ThreadApi {
 
     @GET("api/v1/threads/{id}")
     suspend fun getThreadById(@Path("id") threadId: String): ThreadResponse
+
+    @GET("api/v1/threads/{id}/sparks/ordered")
+    suspend fun fetchOrderedSparks(@Path("id") threadId: String): List<SparkResponse>
 
 }

@@ -28,7 +28,7 @@ class RetrofitProvider private constructor(context: Context) {
     private val gson = GsonBuilder().create()
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("http://192.168.1.104:8000/") // change for prod
+        .baseUrl("http://192.168.1.102:8000/") // change for prod
         .addConverterFactory(GsonConverterFactory.create(gson))
         .client(client)
         .build()

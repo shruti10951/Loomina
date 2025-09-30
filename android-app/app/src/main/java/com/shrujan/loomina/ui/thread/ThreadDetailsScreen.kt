@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.shrujan.loomina.data.repository.ThreadRepository
+import com.shrujan.loomina.ui.spark.SparkItem
 import com.shrujan.loomina.viewmodel.ThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
@@ -32,10 +34,12 @@ fun ThreadDetailsScreen (
 ) {
     val thread by threadViewModel.thread.collectAsState()
     val threadError by threadViewModel.error.collectAsState()
+    val sparks by threadViewModel.sparks.collectAsState()
 
     // fetch thread when screen loads
     LaunchedEffect(threadId) {
         threadViewModel.getThreadById(threadId)
+        threadViewModel.fetchOrderedSparks(threadId)
     }
 
     LazyColumn (
@@ -55,6 +59,11 @@ fun ThreadDetailsScreen (
                 thread == null -> Text("Loading thread…")
                 else -> ThreadHeader(thread = thread!!)
             }
+        }
+
+        // Sparks list
+        items(sparks) { spark ->
+            SparkItem(spark = spark)
         }
     }
 }

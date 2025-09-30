@@ -14,10 +14,12 @@ object Routes {
     const val CREATE = "create"
     const val LIBRARY = "library"
     const val PROFILE = "profile"
-    const val THREAD = "thread"
-    const val STORY = "story"
+    const val CREATE_THREAD = "create-thread"
+    const val CREATE_STORY = "create-story"
 
     const val CREATE_SPARK = "create_spark/{threadId}"
-    // helper to build a concrete route
     fun createSpark(threadId: String) = "create_spark/$threadId"
+
+    const val THREAD_DETAILS = "thread-details/{threadId}"
+    fun showThreadDetails(threadId: String) = "thread-details/$threadId"
 }

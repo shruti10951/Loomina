@@ -2,6 +2,7 @@ package com.shrujan.loomina.data.repository
 
 import android.content.Context
 import com.shrujan.loomina.data.remote.api.RetrofitProvider
+import com.shrujan.loomina.data.remote.dto.SparkResponse
 import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.remote.dto.ThreadResponse
 import com.shrujan.loomina.utils.ApiResult
@@ -45,6 +46,15 @@ class ThreadRepository(context: Context) {
     suspend fun getThreadById(threadId: String): ApiResult<ThreadResponse> {
         return try {
             val response = apiProvider.threadApi.getThreadById(threadId)
+            ApiResult.Success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
+    suspend fun fetchOrderedSparks(threadId: String): ApiResult<List<SparkResponse>> {
+        return try {
+            val response = apiProvider.threadApi.fetchOrderedSparks(threadId)
             ApiResult.Success(response)
         } catch (e: Exception) {
             ApiResult.Error(e.message ?: "Unknown error")

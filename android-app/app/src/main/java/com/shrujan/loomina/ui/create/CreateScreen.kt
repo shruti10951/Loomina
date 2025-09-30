@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.shrujan.loomina.R
-import com.shrujan.loomina.theme.LoominaTheme
 import com.shrujan.loomina.ui.navigation.Routes
 
 @Composable
@@ -47,7 +46,7 @@ fun CreateScreen(
                 title = "Thread",
                 description = "Collaborative storytelling with others",
                 iconRes = R.drawable.ic_thread,
-                onClick = { navController.navigate(Routes.THREAD) }
+                onClick = { navController.navigate(Routes.CREATE_THREAD) }
             )
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -57,7 +56,7 @@ fun CreateScreen(
                 title = "Story",
                 description = "Write a solo story or novel",
                 iconRes = R.drawable.ic_story,
-                onClick = { navController.navigate(Routes.STORY) }
+                onClick = { navController.navigate(Routes.CREATE_STORY) }
             )
         }
 
