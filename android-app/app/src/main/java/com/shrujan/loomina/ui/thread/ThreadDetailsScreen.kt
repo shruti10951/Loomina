@@ -17,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.ui.spark.SparkItem
@@ -30,7 +31,9 @@ fun ThreadDetailsScreen (
     threadId: String,
     threadViewModel: ThreadViewModel = viewModel(
         factory = ThreadViewModelFactory(
-            repository = ThreadRepository(LocalContext.current))
+            threadRepository = ThreadRepository(LocalContext.current),
+            sparkRepository = SparkRepository(LocalContext.current)
+        )
     ),
 ) {
     val thread by threadViewModel.thread.collectAsState()
@@ -68,6 +71,9 @@ fun ThreadDetailsScreen (
                 spark = spark,
                 onExtendClick = {
                     navController.navigate(Routes.extendSpark(threadId, spark.id))
+                },
+                onLikeClick = {
+                    threadViewModel.toggleSparkLike(spark.id)
                 }
             )
         }

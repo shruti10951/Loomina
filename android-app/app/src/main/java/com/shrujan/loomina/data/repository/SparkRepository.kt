@@ -2,6 +2,7 @@ package com.shrujan.loomina.data.repository
 
 import android.content.Context
 import com.shrujan.loomina.data.remote.api.RetrofitProvider
+import com.shrujan.loomina.data.remote.dto.SparkLikeResponse
 import com.shrujan.loomina.data.remote.dto.SparkRequest
 import com.shrujan.loomina.data.remote.dto.SparkResponse
 import com.shrujan.loomina.utils.ApiResult
@@ -41,6 +42,16 @@ class SparkRepository(context: Context) {
     suspend fun getSparkById(sparkId: String): ApiResult<SparkResponse> {
         return try {
             val response = apiProvider.sparkApi.getSparkById(sparkId)
+            ApiResult.Success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
+
+    suspend fun toggleLike(sparkId: String): ApiResult<SparkLikeResponse> {
+        return try {
+            val response = apiProvider.sparkApi.likeSpark(sparkId)
             ApiResult.Success(response)
         } catch (e: Exception) {
             ApiResult.Error(e.message ?: "Unknown error")

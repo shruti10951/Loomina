@@ -2,8 +2,8 @@ from fastapi import APIRouter, HTTPException, Depends
 from beanie import PydanticObjectId
 
 
-from app.schemas.spark import CreateSparkSchema, SparkResponseSchema
-from app.services.spark_service import validate_and_create_spark
+from app.schemas.spark import CreateSparkSchema, SparkResponseSchema, SparkLikeResponseSchema
+from app.services.spark_service import validate_and_create_spark, toggle_like_spark
 
 
 from app.models.spark import Spark
@@ -52,6 +52,7 @@ async def create_spark(
         isSensitive=spark.isSensitive,
         isEdited=spark.isEdited,
         reportCount=spark.reportCount,
+        likedByCurrentUser=False
     )
 
 
@@ -75,6 +76,8 @@ async def get_spark_by_id(spark_id: str, current_user: User = Depends(get_curren
     if not spark_user:
         raise HTTPException(status_code=404, detail="Spark creator not found")
     
+    liked_by_current_user = str(current_user.id) in spark.likedBy
+    
     return SparkResponseSchema(
     _id=str(spark.id),
     threadId=str(spark.threadId),
@@ -95,4 +98,11 @@ async def get_spark_by_id(spark_id: str, current_user: User = Depends(get_curren
     isSensitive=spark.isSensitive,
     isEdited=spark.isEdited,
     reportCount=spark.reportCount,
+    likedByCurrentUser=liked_by_current_user
 )
+
+
+@router.post('/{spark_id}/like', response_model=SparkLikeResponseSchema)
+async def like_spark(spark_id: str, current_user: User = Depends(get_current_user)):
+    return await toggle_like_spark(spark_id, current_user)
+

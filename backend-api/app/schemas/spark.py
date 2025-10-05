@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Optional, List
+from typing import Optional, List, Literal
 from datetime import datetime
 
 from app.schemas.user import MinimalUserSchema
@@ -34,6 +34,8 @@ class SparkResponseSchema(BaseModel):
     numberOfComments: int
     likedBy: List[str]
 
+    likedByCurrentUser: bool = False
+
     previousSparkId: Optional[str] = None
 
     isStart: bool
@@ -59,3 +61,13 @@ class MinimalSparkSchema(BaseModel):
     class Config:
         orm_mode = True
         allow_population_by_field_name = True
+
+# For returning spark like
+class SparkLikeResponseSchema(BaseModel):
+    sparkId: str
+    action: Literal["liked", "unliked"]
+    numberOfLikes: int
+    likedByCurrentUser: bool
+
+
+

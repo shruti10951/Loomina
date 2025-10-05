@@ -1,4 +1,8 @@
 package com.shrujan.loomina.data.remote.dto
 
-class SparkLikeResponse {
-}
+data class SparkLikeResponse (
+    val sparkId: String,
+    val action: String,
+    val numberOfLikes: Int,
+    val likedByCurrentUser: Boolean
+)

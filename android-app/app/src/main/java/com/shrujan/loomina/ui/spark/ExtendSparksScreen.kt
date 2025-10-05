@@ -78,9 +78,14 @@ fun ExtendSparksScreen(
             }
         } else {
             // Render all sparks in order
-            items(sparkChain) { spark ->
-                SparkItem(spark)
-            }
+//            items(sparkChain) { spark ->
+//                SparkItem(
+//                    spark,
+//                    onCommentClick = TODO(),
+//                    onExtendClick = TODO(),
+//                    onLikeClick = TODO()
+//                )
+//            }
 
             // Composer for next spark
             item {

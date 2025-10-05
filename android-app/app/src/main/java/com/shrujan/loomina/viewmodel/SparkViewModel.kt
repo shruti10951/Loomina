@@ -96,6 +96,7 @@ class SparkViewModel(
         }
     }
 
+
     fun resetState() {
         _uiState.value = SparkUiState()
     }

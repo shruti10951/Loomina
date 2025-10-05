@@ -4,7 +4,10 @@ from beanie import PydanticObjectId
 from typing import List, Optional
 
 from app.models.spark import Spark
+from app.models.user import User
 from app.models.thread import Thread
+
+from app.schemas.spark import SparkLikeResponseSchema
 
 async def validate_and_create_spark(
         threadId: str,
@@ -67,5 +70,40 @@ async def validate_and_create_spark(
     return spark
 
 
+async def toggle_like_spark(
+        spark_id: str,
+        user: User
+) -> SparkLikeResponseSchema:
+    try:
+        spark_obj_id = PydanticObjectId(spark_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid spark ID format")
+    
+    spark = await Spark.get(spark_obj_id)
+    if not spark:
+        raise HTTPException(status_code=404, detail="Spark not found")
+    
+    user_id_str = str(user.id)
+
+    if user_id_str in spark.likedBy:
+        spark.likedBy.remove(user_id_str)
+        spark.numberOfLikes = max(spark.numberOfLikes - 1, 0)
+        action = "unliked"
+
+    else:
+        spark.likedBy.append(user_id_str)
+        spark.numberOfLikes += 1
+        action = "liked"
+
+    await spark.save()
+
+    liked_by_current_user = user_id_str in spark.likedBy
+
+    return SparkLikeResponseSchema(
+        sparkId=spark_id,
+        action=action,
+        numberOfLikes=spark.numberOfLikes,
+        likedByCurrentUser=liked_by_current_user
+    )
 
 

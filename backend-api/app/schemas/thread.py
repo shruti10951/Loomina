@@ -26,14 +26,22 @@ class UpdateThreadSchema(BaseModel):
 # For returing thread data in response 
 class ThreadResponseSchema(BaseModel):
     id: str = Field(..., alias="_id")
+
     threadTitle: str
     prompt: str
+
     creationTime: datetime
+
     user: MinimalUserSchema  # populated user info
+
     numberOfLikes: int
     numberOfComments: int
     likedBy: List[str]
+
+    likedByCurrentUser: bool = False
+
     coverImage: Optional[str] = None
+    
     genre: List[str]
     tags: List[str]
     reportCount: int

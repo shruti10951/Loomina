@@ -10,6 +10,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.StoryRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.data.repository.UserRepository
@@ -29,7 +30,10 @@ fun ProfileScreen(
         factory = UserViewModelFactory(UserRepository(LocalContext.current))
     ),
     threadViewModel: ThreadViewModel = viewModel(
-        factory = ThreadViewModelFactory(ThreadRepository(LocalContext.current))
+        factory = ThreadViewModelFactory(
+            threadRepository = ThreadRepository(LocalContext.current),
+            sparkRepository = SparkRepository(LocalContext.current)
+        )
     ),
     storyViewModel: StoryViewModel = viewModel(
         factory = StoryViewModelFactory(StoryRepository(LocalContext.current))

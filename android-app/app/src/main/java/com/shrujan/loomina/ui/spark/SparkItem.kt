@@ -6,29 +6,42 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Create
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
 import com.shrujan.loomina.data.remote.dto.SparkResponse
+import com.shrujan.loomina.data.repository.SparkRepository
+import com.shrujan.loomina.viewmodel.SparkViewModel
+import com.shrujan.loomina.viewmodel.factory.SparkViewModelFactory
 
 @Composable
 fun SparkItem(
     spark: SparkResponse,
-    onLikeClick: () -> Unit = {},
     onCommentClick: () -> Unit = {},
-    onExtendClick: () -> Unit = {}
+    onExtendClick: () -> Unit = {},
+    onLikeClick: () -> Unit
 ) {
+
+    var isLiked by remember { mutableStateOf(spark.likedByCurrentUser) }
+    var likesCount by remember { mutableStateOf(spark.numberOfLikes) }
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -86,13 +99,22 @@ fun SparkItem(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
+                    // Like button
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        IconButton(onClick = onLikeClick) {
+                        IconButton(onClick = { onLikeClick() }) {
                             Icon(
-                                imageVector = Icons.Filled.FavoriteBorder,
-                                contentDescription = "Like"
+                                imageVector = if (spark.likedByCurrentUser)
+                                    Icons.Filled.Favorite
+                                else
+                                    Icons.Filled.FavoriteBorder,
+                                contentDescription = "Like",
+                                tint = if(spark.likedByCurrentUser)
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    LocalContentColor.current
                             )
                         }
+
                         Text(text = "${spark.numberOfLikes}")
                     }
 

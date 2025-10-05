@@ -13,6 +13,8 @@ data class SparkResponse (
     val numberOfComments: Int,
     val likedBy: List<String>,
 
+    val likedByCurrentUser: Boolean,
+
     val previousSparkId: String? = null,
 
     val isStart: Boolean,

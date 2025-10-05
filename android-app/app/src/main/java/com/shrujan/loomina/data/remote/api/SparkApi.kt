@@ -1,5 +1,6 @@
 package com.shrujan.loomina.data.remote.api
 
+import com.shrujan.loomina.data.remote.dto.SparkLikeResponse
 import com.shrujan.loomina.data.remote.dto.SparkRequest
 import com.shrujan.loomina.data.remote.dto.SparkResponse
 import retrofit2.http.Body
@@ -19,7 +20,10 @@ interface SparkApi {
         @Path("id") sparkId: String
     ): SparkResponse
 
-
+    @POST("api/v1/sparks/{id}/like")
+    suspend fun likeSpark(
+        @Path("id") sparkId: String
+    ): SparkLikeResponse
 
 
 }

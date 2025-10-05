@@ -23,6 +23,7 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
+import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.viewmodel.CreateThreadViewModel
@@ -34,7 +35,8 @@ fun CreateThreadScreen(
     navController: NavController,
     viewModel: CreateThreadViewModel = viewModel(
         factory = ThreadViewModelFactory(
-            repository = ThreadRepository(LocalContext.current)
+            threadRepository = ThreadRepository(LocalContext.current),
+            sparkRepository = SparkRepository(LocalContext.current)
         )
     )
 ) {
