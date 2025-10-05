@@ -16,7 +16,7 @@ router = APIRouter()
 # ---------------------------
 # Create Story
 # ---------------------------
-@router.post("/create", response_model=StoryResponseSchema)
+@router.post("/", response_model=StoryResponseSchema)
 async def create_story(
     story_data: CreateStorySchema,
     current_user: User = Depends(get_current_user)

@@ -22,7 +22,7 @@ router = APIRouter()
 # ---------------------------
 # Create Thread
 # ---------------------------
-@router.post("/create", response_model=ThreadResponseSchema)
+@router.post("/", response_model=ThreadResponseSchema)
 async def create_thread(
     thread_data: CreateThreadSchema,
     current_user: User = Depends(get_current_user)

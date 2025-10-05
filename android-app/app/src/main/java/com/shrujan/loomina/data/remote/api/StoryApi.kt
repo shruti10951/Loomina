@@ -7,7 +7,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 
 interface StoryApi {
-    @POST("api/v1/stories/create")
+    @POST("api/v1/stories/")
     suspend fun createStory(@Body body: StoryRequest): StoryResponse
 
     @GET("api/v1/stories/me")

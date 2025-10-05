@@ -17,43 +17,43 @@ router = APIRouter()
 # ---------------------------
 # Create Spark
 # ---------------------------
-@router.post("/threads/{threadId}/sparks/create", response_model=SparkResponseSchema)
+@router.post("/", response_model=SparkResponseSchema)
 async def create_spark(
-    threadId: PydanticObjectId,
     spark_data: CreateSparkSchema,
     current_user: User = Depends(get_current_user)
 ):
+
     spark = await validate_and_create_spark(
-        threadId=threadId,
+        threadId=spark_data.threadId,
         userId=current_user.id,
         sparkText=spark_data.sparkText,
         previousSparkId=spark_data.previousSparkId,
         isStart=spark_data.isStart or False,
-        isSensitive= spark_data.isSensitive or False
+        isSensitive=spark_data.isSensitive or False
     )
 
-
     return SparkResponseSchema(
-    _id=str(spark.id),
-    threadId=str(spark.threadId),
-    user={
-        "_id": str(current_user.id),
-        "username": current_user.username,
-        "userProfileImage": current_user.userProfileImage,
-    },
-    sparkText=spark.sparkText,
-    creationTime=spark.creationTime,
-    numberOfLikes=spark.numberOfLikes,
-    numberOfComments=spark.numberOfComments,
-    likedBy=spark.likedBy,
-    previousSparkId=spark.previousSparkId,
-    isStart=spark.isStart,
-    isReported=spark.isReported,
-    isDeleted=spark.isDeleted,
-    isSensitive=spark.isSensitive,
-    isEdited=spark.isEdited,
-    reportCount=spark.reportCount,
-)
+        _id=str(spark.id),
+        threadId=str(spark.threadId),
+        user={
+            "_id": str(current_user.id),
+            "username": current_user.username,
+            "userProfileImage": current_user.userProfileImage,
+        },
+        sparkText=spark.sparkText,
+        creationTime=spark.creationTime,
+        numberOfLikes=spark.numberOfLikes,
+        numberOfComments=spark.numberOfComments,
+        likedBy=spark.likedBy,
+        previousSparkId=spark.previousSparkId,
+        isStart=spark.isStart,
+        isReported=spark.isReported,
+        isDeleted=spark.isDeleted,
+        isSensitive=spark.isSensitive,
+        isEdited=spark.isEdited,
+        reportCount=spark.reportCount,
+    )
+
 
 
 # ---------------------------

@@ -37,10 +37,11 @@ class SparkViewModel(
         val isStart = previousSparkId == null
 
         val request = SparkRequest(
-            sparkText,
-            previousSparkId,
-            isStart,
-            isSensitive
+            sparkText = sparkText,
+            previousSparkId = previousSparkId,
+            isStart = isStart,
+            isSensitive = isSensitive,
+            threadId = threadId
         )
 
         // Validation
@@ -81,7 +82,7 @@ class SparkViewModel(
     val spark: StateFlow<SparkResponse?> =_spark
 
     private val _error = MutableStateFlow<String?>(null)
-    val err0r: StateFlow<String?> = _error
+    val error: StateFlow<String?> = _error
 
 
     fun getSparkById(

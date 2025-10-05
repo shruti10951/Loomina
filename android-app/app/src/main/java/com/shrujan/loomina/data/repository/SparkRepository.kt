@@ -20,8 +20,13 @@ class SparkRepository(context: Context) {
     ): ApiResult<SparkResponse> {
         return try {
             val res = apiProvider.sparkApi.createSpark(
-                threadId = threadId,
-                body = SparkRequest(sparkText, previousSparkId, isStart, isSensitive)
+                body = SparkRequest(
+                    sparkText = sparkText,
+                    previousSparkId = previousSparkId,
+                    isStart = isStart,
+                    isSensitive = isSensitive,
+                    threadId = threadId
+                )
             )
             ApiResult.Success(res)
         } catch (e: HttpException) {

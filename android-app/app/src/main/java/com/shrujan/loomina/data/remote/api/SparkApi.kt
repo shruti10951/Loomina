@@ -9,14 +9,15 @@ import retrofit2.http.Path
 
 interface SparkApi {
 
-    @POST("/api/v1/threads/{threadId}/sparks/create")
+    @POST("/api/v1/sparks/")
     suspend fun createSpark(
-        @Path("threadId") threadId: String,
         @Body body: SparkRequest
     ): SparkResponse
 
     @GET("api/v1/sparks/{id}")
-    suspend fun getSparkById(@Path("id") sparkId: String): SparkResponse
+    suspend fun getSparkById(
+        @Path("id") sparkId: String
+    ): SparkResponse
 
 
 

@@ -7,10 +7,12 @@ from app.schemas.user import MinimalUserSchema
 
 # For creating spark
 class CreateSparkSchema(BaseModel):
+    threadId: str
     sparkText: str
     previousSparkId: Optional[str] = None
     isStart: Optional[bool] = False
     isSensitive: Optional[bool] = False
+
 
 
 # For updating spark

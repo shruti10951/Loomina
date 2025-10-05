@@ -10,7 +10,7 @@ import retrofit2.http.Path
 
 interface ThreadApi {
 
-    @POST("api/v1/threads/create")
+    @POST("api/v1/threads/")
     suspend fun createThread(@Body body: ThreadRequest): ThreadResponse
 
     @GET("api/v1/threads/me")

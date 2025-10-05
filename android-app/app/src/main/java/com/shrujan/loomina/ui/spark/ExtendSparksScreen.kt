@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.shrujan.loomina.data.remote.dto.SparkResponse
 import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.thread.ThreadHeader
@@ -33,21 +34,34 @@ fun ExtendSparksScreen(
             repository = SparkRepository(LocalContext.current)
         )
     ),
-    threadViewModel: ThreadViewModel = viewModel(
-        factory = ThreadViewModelFactory(
-            repository = ThreadRepository(LocalContext.current))
-    ),
+
 ) {
 
-    val thread by threadViewModel.thread.collectAsState()
-    val threadError by threadViewModel.error.collectAsState()
-
+    val uiState by sparkViewModel.uiState.collectAsState()
     val currentSpark by sparkViewModel.spark.collectAsState()
 
-    // fetch thread when screen loads
-    LaunchedEffect(threadId) {
-        threadViewModel.getThreadById(threadId)
+    var sparkChain by remember { mutableStateOf<List<SparkResponse>>(emptyList()) }
+
+    // Load the initial spark
+    LaunchedEffect(currentSparkId) {
         sparkViewModel.getSparkById(currentSparkId)
+    }
+
+    // When currentSpark loads, add it to the chain if empty
+    LaunchedEffect(currentSpark) {
+        currentSpark?.let {
+            if (sparkChain.isEmpty()) {
+                sparkChain = listOf(it)
+            }
+        }
+    }
+
+    // When a new spark is created successfully, append it
+    LaunchedEffect(uiState.spark) {
+        uiState.spark?.let { newSpark ->
+            sparkChain = sparkChain + newSpark
+            sparkViewModel.resetState() // reset to clear state for next composer
+        }
     }
 
 
@@ -58,24 +72,26 @@ fun ExtendSparksScreen(
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
 
-        // Thread header on top
-        item {
-            when {
-                threadError != null -> Text(
-                    text = threadError!!,
-                    color = MaterialTheme.colorScheme.error
-                )
-                thread == null -> Text("Loading thread…")
-                else -> ThreadHeader(thread = thread!!)
+        if (sparkChain.isEmpty()) {
+            item {
+                Text("Loading spark...")
             }
-        }
+        } else {
+            // Render all sparks in order
+            items(sparkChain) { spark ->
+                SparkItem(spark)
+            }
 
-        item {
-            when {
-                currentSpark == null -> Text("Loading current spark...")
-                else -> SparkItem(
-                    spark = currentSpark!!
-                )
+            // Composer for next spark
+            item {
+                SparkComposer { text, isSensitive ->
+                    sparkViewModel.createSpark(
+                        threadId = threadId,
+                        sparkText = text,
+                        previousSparkId = sparkChain.lastOrNull()?.id,
+                        isSensitive = isSensitive
+                    )
+                }
             }
         }
 
