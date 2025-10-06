@@ -13,21 +13,23 @@ class UserViewModel(
     private val userRepository: UserRepository
 ) : ViewModel() {
 
-    private val _userState = MutableStateFlow<UserResponse?>(null)
-    val userState: StateFlow<UserResponse?> = _userState
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    private val _uiState = MutableStateFlow(UserUiState())
+    val uiState: StateFlow<UserUiState> = _uiState
 
     init {
         fetchUser()
     }
 
-    private fun fetchUser() {
+    fun fetchUser() {
         viewModelScope.launch {
-            when(val result = userRepository.getCurrentUser()){
-                is ApiResult.Success -> _userState.value = result.data
-                is ApiResult.Error -> _error.value =  result.message
+            _uiState.value = _uiState.value.copy(loading = true)
+            when (val result = userRepository.getCurrentUser()) {
+                is ApiResult.Success -> {
+                    _uiState.value = UserUiState(user = result.data)
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = UserUiState(error = result.message)
+                }
             }
         }
     }

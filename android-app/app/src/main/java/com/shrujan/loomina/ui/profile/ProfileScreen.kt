@@ -39,8 +39,7 @@ fun ProfileScreen(
         factory = StoryViewModelFactory(StoryRepository(LocalContext.current))
     ),
 ) {
-    val user by userViewModel.userState.collectAsState()
-    val userError by userViewModel.error.collectAsState()
+    val userState by userViewModel.uiState.collectAsState()
 
     val myThreads by threadViewModel.myThreads.collectAsState()
     val threadError by threadViewModel.error.collectAsState()
@@ -58,18 +57,19 @@ fun ProfileScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         when {
-            userError != null -> {
+
+            userState.loading -> {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+
+            userState.error != null -> {
                 Text(
-                    text = userError ?: "Unknown error",
+                    text = userState.error ?: "Unknown error",
                     modifier = Modifier.align(Alignment.Center)
                 )
             }
 
-            user == null -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
-
-            else -> {
+            userState.user != null -> {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
@@ -77,7 +77,11 @@ fun ProfileScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     item {
-                        ProfileHeader(user = user!!, myThreads.size, myStories.size)
+                        ProfileHeader(
+                            user = userState.user!!,
+                            threadCount = myThreads.size,
+                            storyCount = myStories.size
+                        )
 
                         Spacer(modifier = Modifier.height(16.dp))
 
