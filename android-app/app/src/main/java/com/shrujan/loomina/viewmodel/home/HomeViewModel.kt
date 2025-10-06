@@ -18,6 +18,7 @@ class HomeViewModel (
 
     fun loadUser() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(loading = true)
             when (val result = userRepository.getCurrentUser()) {
                 is ApiResult.Success -> {
                     _uiState.value = HomeUiState(user = result.data)
@@ -28,5 +29,6 @@ class HomeViewModel (
             }
         }
     }
+
 
 }

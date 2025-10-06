@@ -47,6 +47,8 @@ fun HomeScreen(
         contentAlignment = Alignment.Center
     ) {
         when {
+            state.loading -> CircularProgressIndicator()
+
             state.user != null -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -78,10 +80,6 @@ fun HomeScreen(
 
             state.error != null -> {
                 Text("Error: $state.error")
-            }
-
-            else -> {
-                CircularProgressIndicator()
             }
         }
 
