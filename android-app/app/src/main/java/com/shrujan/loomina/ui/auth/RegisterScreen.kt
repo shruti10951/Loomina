@@ -26,7 +26,7 @@ fun RegisterScreen(
         )
     )
 ) {
-    val uiState = viewModel.registerUiState.value
+    val uiState = viewModel.uiState.value
 
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }

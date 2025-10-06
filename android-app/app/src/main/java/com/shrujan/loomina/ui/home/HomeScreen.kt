@@ -33,8 +33,7 @@ fun HomeScreen(
         )
     )
 ) {
-    val userState by viewModel.user.collectAsState()
-    val errorState by viewModel.error.collectAsState()
+    val state by viewModel.uiState.collectAsState()
 
     // Load user when screen starts
     LaunchedEffect(Unit) {
@@ -48,14 +47,14 @@ fun HomeScreen(
         contentAlignment = Alignment.Center
     ) {
         when {
-            userState != null -> {
+            state.user != null -> {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text("Welcome, ${userState!!.username}")
-                    Text("Email: ${userState!!.email}")
-                    Text("Bio: ${userState!!.bio ?: "No bio"}")
+                    Text("Welcome, ${state.user!!.username}")
+                    Text("Email: ${state.user!!.email}")
+                    Text("Bio: ${state.user!!.bio ?: "No bio"}")
 
                     Spacer(modifier = Modifier.height(20.dp))
 
@@ -77,8 +76,8 @@ fun HomeScreen(
                 }
             }
 
-            errorState != null -> {
-                Text("Error: $errorState")
+            state.error != null -> {
+                Text("Error: $state.error")
             }
 
             else -> {
