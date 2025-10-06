@@ -52,7 +52,7 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
 import com.shrujan.loomina.data.repository.StoryRepository
-import com.shrujan.loomina.viewmodel.CreateStoryViewModel
+import com.shrujan.loomina.viewmodel.story.CreateStoryViewModel
 import com.shrujan.loomina.viewmodel.factory.StoryViewModelFactory
 
 @OptIn(ExperimentalLayoutApi::class)

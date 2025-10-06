@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
-import com.shrujan.loomina.viewmodel.CreateThreadViewModel
-import com.shrujan.loomina.viewmodel.ThreadViewModel
+import com.shrujan.loomina.viewmodel.thread.CreateThreadViewModel
+import com.shrujan.loomina.viewmodel.thread.ThreadViewModel
 
 class ThreadViewModelFactory(
     private val threadRepository: ThreadRepository,

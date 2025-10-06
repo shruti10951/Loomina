@@ -20,16 +20,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
 import com.shrujan.loomina.data.remote.dto.SparkResponse
-import com.shrujan.loomina.data.repository.SparkRepository
-import com.shrujan.loomina.viewmodel.SparkViewModel
-import com.shrujan.loomina.viewmodel.factory.SparkViewModelFactory
 
 @Composable
 fun SparkItem(

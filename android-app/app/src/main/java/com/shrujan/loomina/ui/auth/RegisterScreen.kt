@@ -13,7 +13,7 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
 import com.shrujan.loomina.ui.navigation.Routes
-import com.shrujan.loomina.viewmodel.AuthViewModel
+import com.shrujan.loomina.viewmodel.auth.AuthViewModel
 import com.shrujan.loomina.viewmodel.factory.AuthViewModelFactory
 
 @Composable

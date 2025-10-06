@@ -12,8 +12,8 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
 import com.shrujan.loomina.data.repository.UserRepository
-import com.shrujan.loomina.viewmodel.AuthViewModel
-import com.shrujan.loomina.viewmodel.HomeViewModel
+import com.shrujan.loomina.viewmodel.auth.AuthViewModel
+import com.shrujan.loomina.viewmodel.home.HomeViewModel
 import com.shrujan.loomina.viewmodel.factory.AuthViewModelFactory
 import com.shrujan.loomina.viewmodel.factory.HomeViewModelFactory
 

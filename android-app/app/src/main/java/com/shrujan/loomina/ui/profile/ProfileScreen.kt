@@ -15,9 +15,9 @@ import com.shrujan.loomina.data.repository.StoryRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.data.repository.UserRepository
 import com.shrujan.loomina.ui.navigation.Routes
-import com.shrujan.loomina.viewmodel.StoryViewModel
-import com.shrujan.loomina.viewmodel.ThreadViewModel
-import com.shrujan.loomina.viewmodel.UserViewModel
+import com.shrujan.loomina.viewmodel.story.StoryViewModel
+import com.shrujan.loomina.viewmodel.thread.ThreadViewModel
+import com.shrujan.loomina.viewmodel.social.UserViewModel
 import com.shrujan.loomina.viewmodel.factory.StoryViewModelFactory
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 import com.shrujan.loomina.viewmodel.factory.UserViewModelFactory

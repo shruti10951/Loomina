@@ -22,4 +22,10 @@ object Routes {
 
     const val EXTEND_SPARK = "extend_spark/{threadId}/{currentSparkId}"
     fun extendSpark(threadId: String, currentSparkId: String) = "extend_spark/$threadId/$currentSparkId"
+
+    const val ADD_START_SPARK = "add-spark/{threadId}"
+    fun addStartSpark(threadId: String) = "add-spark/$threadId"
+
+
 }
+

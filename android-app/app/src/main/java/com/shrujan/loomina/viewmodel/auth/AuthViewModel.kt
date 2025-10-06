@@ -1,8 +1,7 @@
-package com.shrujan.loomina.viewmodel
+package com.shrujan.loomina.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.shrujan.loomina.data.remote.dto.TokenResponse
 import com.shrujan.loomina.data.repository.AuthRepository
 import com.shrujan.loomina.utils.ApiResult
 import kotlinx.coroutines.Job
@@ -14,40 +13,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-/**
- * Represents authentication state of the user.
- */
-sealed class AuthState {
-    object Loading : AuthState()
-    data class Authenticated(val token: String) : AuthState()
-    object Unauthenticated : AuthState()
-}
 
-/**
- * UI state holder for login screen.
- */
-data class LoginUiState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val token: TokenResponse? = null
-)
 
-/**
- * UI state holder for register screen.
- */
-data class RegisterUiState(
-    val loading: Boolean = false,
-    val error: String? = null,
-    val token: TokenResponse? = null
-)
-
-/**
- * AuthViewModel acts as the bridge between UI (Compose) and data layer (Repository + Preferences).
- * - Manages login and registration logic
- * - Exposes UI state (LoginUiState, RegisterUiState)
- * - Persists tokens via UserPreferences
- * - Exposes high-level AuthState for navigation decisions (loading / authenticated / unauthenticated)
- */
 class AuthViewModel(
     private val repo: AuthRepository,
     private val userPrefs: UserPreferences
@@ -60,13 +27,10 @@ class AuthViewModel(
     private val _authState = MutableStateFlow<AuthState>(AuthState.Loading)
     val authState: StateFlow<AuthState> = _authState
 
-    // UI state for login
-    var uiState: MutableState<LoginUiState> = mutableStateOf(LoginUiState())
+    // UI state for login and register
+    var uiState: MutableState<AuthUiState> = mutableStateOf(AuthUiState())
         private set
 
-    // UI state for register
-    var registerUiState: MutableState<RegisterUiState> = mutableStateOf(RegisterUiState())
-        private set
 
     // Track running login/register jobs
     private var inFlightLogin: Job? = null
@@ -85,19 +49,16 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Handles login process:
-     */
     fun login(email: String, password: String) {
         if (uiState.value.loading) return
 
         inFlightLogin?.cancel()
-        uiState.value = LoginUiState(loading = true)
+        uiState.value = AuthUiState(loading = true)
 
         inFlightLogin = viewModelScope.launch {
             when (val result = repo.login(email, password)) {
                 is ApiResult.Success -> {
-                    uiState.value = LoginUiState(
+                    uiState.value = AuthUiState(
                         loading = false,
                         token = result.data,
                         error = null
@@ -107,7 +68,7 @@ class AuthViewModel(
                     }
                 }
                 is ApiResult.Error -> {
-                    uiState.value = LoginUiState(
+                    uiState.value = AuthUiState(
                         loading = false,
                         error = result.message
                     )
@@ -116,19 +77,16 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Handles registration process:
-     */
     fun register(email: String, username: String, password: String) {
-        if (registerUiState.value.loading) return
+        if (uiState.value.loading) return
 
         inFlightRegister?.cancel()
-        registerUiState.value = RegisterUiState(loading = true)
+        uiState.value = AuthUiState(loading = true)
 
         inFlightRegister = viewModelScope.launch {
             when (val result = repo.register(email, username, password)) {
                 is ApiResult.Success -> {
-                    registerUiState.value = RegisterUiState(
+                    uiState.value = AuthUiState(
                         loading = false,
                         token = result.data,
                         error = null
@@ -138,7 +96,7 @@ class AuthViewModel(
                     }
                 }
                 is ApiResult.Error -> {
-                    registerUiState.value = RegisterUiState(
+                    uiState.value = AuthUiState(
                         loading = false,
                         error = result.message
                     )
@@ -147,9 +105,6 @@ class AuthViewModel(
         }
     }
 
-    /**
-     * Clears the saved token (logout).
-     */
     fun logout() {
         viewModelScope.launch {
             userPrefs.clearToken()

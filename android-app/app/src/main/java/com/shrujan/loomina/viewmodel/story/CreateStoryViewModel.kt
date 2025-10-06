@@ -1,4 +1,4 @@
-package com.shrujan.loomina.viewmodel
+package com.shrujan.loomina.viewmodel.story
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

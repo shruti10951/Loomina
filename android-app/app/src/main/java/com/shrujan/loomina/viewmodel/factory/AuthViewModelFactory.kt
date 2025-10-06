@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
-import com.shrujan.loomina.viewmodel.AuthViewModel
+import com.shrujan.loomina.viewmodel.auth.AuthViewModel
 
 /**
  * Factory class for creating instances of AuthViewModel with

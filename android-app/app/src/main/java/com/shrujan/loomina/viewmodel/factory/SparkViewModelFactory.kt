@@ -3,7 +3,7 @@ package com.shrujan.loomina.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.SparkRepository
-import com.shrujan.loomina.viewmodel.SparkViewModel
+import com.shrujan.loomina.viewmodel.thread.SparkViewModel
 
 
 class SparkViewModelFactory(

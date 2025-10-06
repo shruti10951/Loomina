@@ -21,7 +21,7 @@ import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.ui.spark.SparkItem
-import com.shrujan.loomina.viewmodel.ThreadViewModel
+import com.shrujan.loomina.viewmodel.thread.ThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
 @Composable

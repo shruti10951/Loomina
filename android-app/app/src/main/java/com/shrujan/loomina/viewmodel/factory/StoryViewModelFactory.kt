@@ -3,8 +3,8 @@ package com.shrujan.loomina.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.StoryRepository
-import com.shrujan.loomina.viewmodel.CreateStoryViewModel
-import com.shrujan.loomina.viewmodel.StoryViewModel
+import com.shrujan.loomina.viewmodel.story.CreateStoryViewModel
+import com.shrujan.loomina.viewmodel.story.StoryViewModel
 
 class StoryViewModelFactory(
     private val repository: StoryRepository

@@ -20,14 +20,11 @@ import androidx.navigation.NavController
 import com.shrujan.loomina.data.local.UserPreferences
 import com.shrujan.loomina.data.repository.AuthRepository
 import com.shrujan.loomina.ui.navigation.Routes
-import com.shrujan.loomina.viewmodel.AuthState
-import com.shrujan.loomina.viewmodel.AuthViewModel
+import com.shrujan.loomina.viewmodel.auth.AuthState
+import com.shrujan.loomina.viewmodel.auth.AuthViewModel
 import com.shrujan.loomina.viewmodel.factory.AuthViewModelFactory
 import kotlinx.coroutines.delay
 
-/**
- * A simple splash screen that displays the app name "Loomina"
- */
 @Composable
 fun SplashScreen(
     navController: NavController,

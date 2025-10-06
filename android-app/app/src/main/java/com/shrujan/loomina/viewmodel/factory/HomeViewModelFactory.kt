@@ -3,7 +3,7 @@ package com.shrujan.loomina.viewmodel.factory
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.shrujan.loomina.data.repository.UserRepository
-import com.shrujan.loomina.viewmodel.HomeViewModel
+import com.shrujan.loomina.viewmodel.home.HomeViewModel
 
 /**
  * Factory class responsible for creating instances of HomeViewModel.

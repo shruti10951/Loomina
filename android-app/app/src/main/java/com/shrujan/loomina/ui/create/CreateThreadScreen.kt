@@ -26,7 +26,7 @@ import com.shrujan.loomina.R
 import com.shrujan.loomina.data.repository.SparkRepository
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.navigation.Routes
-import com.shrujan.loomina.viewmodel.CreateThreadViewModel
+import com.shrujan.loomina.viewmodel.thread.CreateThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -72,7 +72,7 @@ fun CreateThreadScreen(
         LaunchedEffect(createdThread.id) {
             Toast.makeText(context, "Thread created successfully!", Toast.LENGTH_SHORT).show()
             val threadId = createdThread.id
-            navController.navigate(Routes.extendSpark(threadId, "")) {
+            navController.navigate(Routes.addStartSpark(threadId)) {
                 launchSingleTop = true
             }
             viewModel.resetState() // reset the state to avoid repeated navigation
