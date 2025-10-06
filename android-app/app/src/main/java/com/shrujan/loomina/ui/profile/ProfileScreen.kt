@@ -41,8 +41,7 @@ fun ProfileScreen(
 ) {
     val userState by userViewModel.uiState.collectAsState()
 
-    val myThreads by threadViewModel.myThreads.collectAsState()
-    val threadError by threadViewModel.error.collectAsState()
+    val threadState by threadViewModel.uiState.collectAsState()
 
     val myStories by storyViewModel.stories.collectAsState()
     val storyError by storyViewModel.error.collectAsState()
@@ -79,7 +78,7 @@ fun ProfileScreen(
                     item {
                         ProfileHeader(
                             user = userState.user!!,
-                            threadCount = myThreads.size,
+                            threadCount = threadState.myThreads.size,
                             storyCount = myStories.size
                         )
 
@@ -96,20 +95,28 @@ fun ProfileScreen(
 
                     item {
                         if (selectedTab.intValue == 0) {
-                            ProfileThreadsSection(
-                                threads = myThreads,
-                                error = threadError
-                            ) {
-                                thread ->
-                                navController.navigate(Routes.showThreadDetails(thread.id))
+                            if (threadState.myThreads.isEmpty()) {
+                                Text("You haven’t created any threads yet.")
+                            } else {
+                                ProfileThreadsSection(
+                                    threads = threadState.myThreads,
+                                    error = threadState.error
+                                ) { thread ->
+                                    navController.navigate(Routes.showThreadDetails(thread.id))
+                                }
                             }
                         } else {
-                            ProfileStoriesSection(
-                                stories = myStories,
-                                error = storyError
-                            ) {
-                                // TODO: navigate to story detail
+                            if (myStories.isEmpty()) {
+                                Text("You haven’t created any stories yet.")
+                            } else {
+                                ProfileStoriesSection(
+                                    stories = myStories,
+                                    error = storyError
+                                ) {
+                                    // TODO: navigate to story detail
+                                }
                             }
+
                         }
                     }
                 }

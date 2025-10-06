@@ -36,9 +36,8 @@ fun ThreadDetailsScreen (
         )
     ),
 ) {
-    val thread by threadViewModel.thread.collectAsState()
-    val threadError by threadViewModel.error.collectAsState()
-    val sparks by threadViewModel.sparks.collectAsState()
+
+    val threadState by threadViewModel.uiState.collectAsState()
 
     // fetch thread when screen loads
     LaunchedEffect(threadId) {
@@ -56,17 +55,19 @@ fun ThreadDetailsScreen (
         // Thread header on top
         item {
             when {
-                threadError != null -> Text(
-                    text = threadError!!,
+                threadState.loading -> Text("Loading thread…")
+
+                threadState.error != null -> Text(
+                    text = threadState.error!!,
                     color = MaterialTheme.colorScheme.error
                 )
-                thread == null -> Text("Loading thread…")
-                else -> ThreadHeader(thread = thread!!)
+
+                threadState.currentThread != null -> ThreadHeader(thread = threadState.currentThread!!)
             }
         }
 
         // Sparks list
-        items(sparks) { spark ->
+        items(threadState.sparks) { spark ->
             SparkItem(
                 spark = spark,
                 onExtendClick = {

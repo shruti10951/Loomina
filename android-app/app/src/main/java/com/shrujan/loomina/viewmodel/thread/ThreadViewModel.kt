@@ -16,75 +16,102 @@ class ThreadViewModel(
     private val sparkRepository: SparkRepository
 ) : ViewModel() {
 
-    private val _myThreads = MutableStateFlow<List<ThreadResponse>>(emptyList())
-    val myThreads: StateFlow<List<ThreadResponse>> = _myThreads
-
-    private val _thread = MutableStateFlow<ThreadResponse?>(null)
-    val thread: StateFlow<ThreadResponse?> = _thread
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
-
-    private val _loading = MutableStateFlow(false)
-    val loading: StateFlow<Boolean> = _loading
-
-    // sparks state
-    private val _sparks = MutableStateFlow<List<SparkResponse>>(emptyList())
-    val sparks: StateFlow<List<SparkResponse>> = _sparks
+    private val _uiState = MutableStateFlow(ThreadUiState())
+    val uiState: StateFlow<ThreadUiState> = _uiState
 
     fun getMyThreads() {
         viewModelScope.launch {
-            _loading.value = true
-            _error.value = null
+            _uiState.value = _uiState.value.copy(
+                loading = true,
+                error = null
+            )
             when (val result = repository.getMyThreads()) {
-                is ApiResult.Success -> _myThreads.value = result.data
-                is ApiResult.Error -> _error.value = result.message
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        myThreads = result.data,
+                        error = null
+                    )
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        error = result.message,
+                    )
+                }
             }
-            _loading.value = false
         }
     }
 
     fun getThreadById(threadId: String) {
         viewModelScope.launch {
-            _loading.value = true
-            _error.value = null
+            _uiState.value = _uiState.value.copy(
+                loading = true,
+                error = null
+            )
             when (val result = repository.getThreadById(threadId)) {
-                is ApiResult.Success -> _thread.value = result.data
-                is ApiResult.Error -> _error.value = result.message
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        currentThread = result.data,
+                        error = null
+                    )
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        error = result.message
+                    )
+                }
             }
-            _loading.value = false
         }
     }
 
     fun fetchOrderedSparks(threadId: String) {
         viewModelScope.launch {
             when (val result = repository.fetchOrderedSparks(threadId)) {
-                is ApiResult.Success -> _sparks.value = result.data
-                is ApiResult.Error -> _error.value = result.message
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        sparks = result.data,
+                        error = null
+                    )
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        error = result.message
+                    )
+                }
             }
         }
     }
 
     fun toggleSparkLike(sparkId: String) {
         viewModelScope.launch {
-            val sparkIndex = _sparks.value.indexOfFirst { it.id == sparkId }
-            if (sparkIndex == -1 ) return@launch
+            val sparks = _uiState.value.sparks.toMutableList()
+            val index = sparks.indexOfFirst { it.id == sparkId }
 
-            val currentSpark = _sparks.value[sparkIndex]
+            if (index == -1 ) return@launch
+
+            val currentSpark = sparks[index]
+
             when (val result = sparkRepository.toggleLike(sparkId)) {
                 is ApiResult.Success -> {
                     val updatedSpark = currentSpark.copy(
                         numberOfLikes = result.data.numberOfLikes,
                         likedByCurrentUser = result.data.likedByCurrentUser
                     )
-                    val updatedList = _sparks.value.toMutableList().apply {
-                        this[sparkIndex] = updatedSpark
-                    }
-                    _sparks.value = updatedList
+                    sparks[index] = updatedSpark
+                    _uiState.value = _uiState.value.copy(
+                        sparks = sparks,
+                        error = null
+                    )
+
                 }
 
                 is ApiResult.Error -> {
-                    _error.value = result.message
+                    _uiState.value = _uiState.value.copy(
+                        error = result.message
+                    )
                 }
             }
         }
