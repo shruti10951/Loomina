@@ -43,8 +43,7 @@ fun ProfileScreen(
 
     val threadState by threadViewModel.uiState.collectAsState()
 
-    val myStories by storyViewModel.stories.collectAsState()
-    val storyError by storyViewModel.error.collectAsState()
+    val storyState by storyViewModel.uiState.collectAsState()
 
     val tabs = listOf("Threads", "Stories")
     val selectedTab = remember { mutableIntStateOf(0) }
@@ -79,7 +78,7 @@ fun ProfileScreen(
                         ProfileHeader(
                             user = userState.user!!,
                             threadCount = threadState.myThreads.size,
-                            storyCount = myStories.size
+                            storyCount = storyState.myStories.size
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -106,12 +105,12 @@ fun ProfileScreen(
                                 }
                             }
                         } else {
-                            if (myStories.isEmpty()) {
+                            if (storyState.myStories.isEmpty()) {
                                 Text("You haven’t created any stories yet.")
                             } else {
                                 ProfileStoriesSection(
-                                    stories = myStories,
-                                    error = storyError
+                                    stories = storyState.myStories,
+                                    error = storyState.error
                                 ) {
                                     // TODO: navigate to story detail
                                 }

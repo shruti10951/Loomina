@@ -13,17 +13,30 @@ class StoryViewModel (
     private val storyRepository: StoryRepository
 ) : ViewModel() {
 
-    private val _stories = MutableStateFlow<List<StoryResponse>>(emptyList())
-    val stories: StateFlow<List<StoryResponse>> = _stories
-
-    private val _error = MutableStateFlow<String?>(null)
-    val error: StateFlow<String?> = _error
+    private val _uiState = MutableStateFlow(StoryUiState())
+    val uiState: StateFlow<StoryUiState> = _uiState
 
     fun getMyStories() {
         viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                loading = true,
+                error = null
+            )
+
             when (val result = storyRepository.getMyStories()) {
-                is ApiResult.Success -> _stories.value = result.data
-                is ApiResult.Error -> _error.value = result.message
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        myStories = result.data,
+                        error = null
+                    )
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        error = result.message,
+                    )
+                }
             }
         }
     }
