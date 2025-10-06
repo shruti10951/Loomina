@@ -1,6 +1,5 @@
 package com.shrujan.loomina.ui.create
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -12,7 +11,6 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -23,11 +21,12 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
-import com.shrujan.loomina.data.repository.SparkRepository
+import com.shrujan.loomina.data.remote.dto.ThreadRequest
 import com.shrujan.loomina.data.repository.ThreadRepository
 import com.shrujan.loomina.ui.navigation.Routes
 import com.shrujan.loomina.viewmodel.thread.CreateThreadViewModel
 import com.shrujan.loomina.viewmodel.factory.ThreadViewModelFactory
+import com.shrujan.loomina.data.repository.SparkRepository
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -60,22 +59,27 @@ fun CreateThreadScreen(
             selectedGenres.isNotEmpty() &&
             tags.isNotEmpty()
 
-    // 🔔 Toast for errors (one-time)
+    // Show one-time error Toast
     uiState.error?.let { errorMsg ->
         LaunchedEffect(errorMsg) {
             Toast.makeText(context, "Error: $errorMsg", Toast.LENGTH_SHORT).show()
         }
     }
 
-    // 🔔 Toast for success (one-time)
+    // Show success Toast + navigate
     uiState.thread?.let { createdThread ->
         LaunchedEffect(createdThread.id) {
             Toast.makeText(context, "Thread created successfully!", Toast.LENGTH_SHORT).show()
-            val threadId = createdThread.id
-            navController.navigate(Routes.addStartSpark(threadId)) {
+            navController.navigate(Routes.addStartSpark(createdThread.id)) {
                 launchSingleTop = true
             }
-            viewModel.resetState() // reset the state to avoid repeated navigation
+            viewModel.resetState()
+            // Reset local form fields if needed
+            threadTitle = ""
+            prompt = ""
+            coverImageUrl = ""
+            selectedGenres.clear()
+            tags.clear()
         }
     }
 
@@ -87,7 +91,6 @@ fun CreateThreadScreen(
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            // Thread Title
             OutlinedTextField(
                 value = threadTitle,
                 onValueChange = { threadTitle = it },
@@ -95,7 +98,6 @@ fun CreateThreadScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            // Prompt
             OutlinedTextField(
                 value = prompt,
                 onValueChange = { prompt = it },
@@ -104,7 +106,6 @@ fun CreateThreadScreen(
                 maxLines = 4
             )
 
-            // Cover Image URL
             OutlinedTextField(
                 value = coverImageUrl,
                 onValueChange = { coverImageUrl = it },
@@ -115,9 +116,7 @@ fun CreateThreadScreen(
 
             if (coverImageUrl.isNotBlank()) {
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp),
+                    modifier = Modifier.fillMaxWidth().height(200.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     AsyncImage(
@@ -127,22 +126,16 @@ fun CreateThreadScreen(
                             .placeholder(R.drawable.placeholder)
                             .error(R.drawable.image_error)
                             .listener(
-                                onSuccess = { _: ImageRequest, _: SuccessResult ->
-                                    Log.d("CoilDebug", "Image loaded successfully")
-                                },
-                                onError = { _: ImageRequest, error: ErrorResult ->
-                                    Log.e("CoilDebug", "Image load failed", error.throwable)
-                                }
+                                onSuccess = { _: ImageRequest, _: SuccessResult -> },
+                                onError = { _: ImageRequest, _: ErrorResult -> }
                             )
                             .build(),
                         contentDescription = "Cover Image Preview",
-                        contentScale = ContentScale.Crop,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
             }
 
-            // Genre Chips
             Text("Select Genres")
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -152,18 +145,14 @@ fun CreateThreadScreen(
                     FilterChip(
                         selected = selectedGenres.contains(genre),
                         onClick = {
-                            if (selectedGenres.contains(genre)) {
-                                selectedGenres.remove(genre)
-                            } else {
-                                selectedGenres.add(genre)
-                            }
+                            if (selectedGenres.contains(genre)) selectedGenres.remove(genre)
+                            else selectedGenres.add(genre)
                         },
                         label = { Text(genre) }
                     )
                 }
             }
 
-            // Tags Input
             Text("Add Tags")
             Row(verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
@@ -183,7 +172,6 @@ fun CreateThreadScreen(
                 }
             }
 
-            // Display Tags
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -202,28 +190,23 @@ fun CreateThreadScreen(
                 }
             }
 
-            // Submit Button
             Button(
                 onClick = {
                     viewModel.createThread(
-                        threadTitle = threadTitle,
-                        prompt = prompt,
-                        coverImage = coverImageUrl,
-                        genre = selectedGenres,
-                        tags = tags
+                        ThreadRequest(
+                            threadTitle = threadTitle,
+                            prompt = prompt,
+                            coverImage = coverImageUrl,
+                            genre = selectedGenres,
+                            tags = tags
+                        )
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = isFormValid && !uiState.loading
             ) {
-                if (uiState.loading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        strokeWidth = 2.dp
-                    )
-                } else {
-                    Text("Create Thread")
-                }
+                if (uiState.loading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                else Text("Create Thread")
             }
         }
     }

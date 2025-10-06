@@ -83,6 +83,9 @@ dependencies {
     implementation("io.coil-kt:coil:2.4.0")
     implementation("io.coil-kt:coil-compose:2.4.0")
 
+    // Accompanist
+    implementation("com.google.accompanist:accompanist-flowlayout:0.36.0")
+
 
 
     testImplementation(libs.junit)

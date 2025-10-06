@@ -26,33 +26,29 @@ class CreateThreadViewModel(
 
     private var inFlightCreate: Job? = null
 
-    fun createThread(
-        threadTitle: String,
-        prompt: String,
-        coverImage: String?,
-        genre: List<String>,
-        tags: List<String>
-    ) {
-        if (_uiState.value.loading) return
+    fun createThread(request: ThreadRequest) {
+        // Sanitize the request
+        val sanitizedRequest = request.sanitized()
 
-        val request = ThreadRequest(threadTitle, prompt, coverImage, genre, tags)
-
-        // Validation
-        if (threadTitle.isBlank() || prompt.isBlank()) {
-            _uiState.value = CreateThreadUiState(error = "Please fill all required fields.")
+        // Validate
+        if (!sanitizedRequest.isValid()) {
+            _uiState.value = _uiState.value.copy(error = "Please fill all required fields correctly.")
             return
         }
 
+        // Prevent duplicate in-flight requests
+        if (_uiState.value.loading) return
+
         inFlightCreate?.cancel()
-        _uiState.value = CreateThreadUiState(loading = true)
+        _uiState.value = _uiState.value.copy(loading = true, error = null)
 
         inFlightCreate = viewModelScope.launch {
             when (val result = repo.createThread(
-                request.threadTitle,
-                request.prompt,
-                request.coverImage,
-                request.genre,
-                request.tags
+                sanitizedRequest.threadTitle,
+                sanitizedRequest.prompt,
+                sanitizedRequest.coverImage,
+                sanitizedRequest.genre,
+                sanitizedRequest.tags
             )) {
                 is ApiResult.Success -> {
                     _uiState.value = CreateThreadUiState(
