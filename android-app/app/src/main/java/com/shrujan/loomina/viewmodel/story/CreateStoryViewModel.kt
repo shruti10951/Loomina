@@ -28,33 +28,26 @@ class CreateStoryViewModel (
     private var inFlightCreate: Job? = null
 
     fun createStory(
-        storyTitle: String,
-        storySynopsis: String,
-        coverImage: String?,
-        genre: List<String>,
-        tags: List<String>
+        request: StoryRequest
     ) {
-        if (_uiState.value.loading) return
 
-        val request = StoryRequest(storyTitle, storySynopsis, coverImage, genre, tags).sanitized()
+        // Sanitize the request
+        val sanitizedRequest = request.sanitized()
 
-        if(!request.isValid()){
-            _uiState.value = CreateStoryUiState(error = "Please fill all required fields correctly.")
+        // Validate
+        if (!sanitizedRequest.isValid()) {
+            _uiState.value = _uiState.value.copy(error = "Please fill all required fields correctly.")
             return
         }
 
-        inFlightCreate?.cancel()
+        // Prevent duplicate in-flight requests
+        if (_uiState.value.loading) return
 
-        _uiState.value = CreateStoryUiState(loading = true)
+        inFlightCreate?.cancel()
+        _uiState.value = _uiState.value.copy(loading = true, error = null)
 
         inFlightCreate = viewModelScope.launch {
-            when (val result = repository.createStory(
-                request.storyTitle,
-                request.storySynopsis,
-                request.coverImage,
-                request.genre,
-                request.tags
-            )) {
+            when (val result = repository.createStory(sanitizedRequest)) {
                 is ApiResult.Success -> {
                     _uiState.value = CreateStoryUiState(
                         loading = false,

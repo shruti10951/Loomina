@@ -13,17 +13,9 @@ import retrofit2.HttpException
 class ThreadRepository(context: Context) {
     private val apiProvider = RetrofitProvider.getInstance(context)
 
-    suspend fun createThread(
-        threadTitle: String,
-        prompt: String,
-        coverImage: String?,
-        genre: List<String>,
-        tags: List<String>
-    ): ApiResult<ThreadResponse> {
+    suspend fun createThread(request: ThreadRequest): ApiResult<ThreadResponse> {
         return try {
-            val res = apiProvider.threadApi.createThread(
-                ThreadRequest(threadTitle, prompt, coverImage, genre, tags)
-            )
+            val res = apiProvider.threadApi.createThread(request)
             ApiResult.Success(res)
         } catch (e: HttpException) {
             ApiResult.Error(e.response()?.errorBody()?.string() ?: "HTTP ${e.code()}")
@@ -33,6 +25,7 @@ class ThreadRepository(context: Context) {
             ApiResult.Error("Unexpected error: ${e.message ?: "unknown"}")
         }
     }
+
 
     suspend fun getMyThreads(): ApiResult<List<ThreadResponse>> {
         return try {

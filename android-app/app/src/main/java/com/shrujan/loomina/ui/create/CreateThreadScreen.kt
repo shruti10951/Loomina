@@ -1,5 +1,6 @@
 package com.shrujan.loomina.ui.create
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -62,14 +63,22 @@ fun CreateThreadScreen(
     // Show one-time error Toast
     uiState.error?.let { errorMsg ->
         LaunchedEffect(errorMsg) {
-            Toast.makeText(context, "Error: $errorMsg", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Error: $errorMsg",
+                Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
     // Show success Toast + navigate
     uiState.thread?.let { createdThread ->
         LaunchedEffect(createdThread.id) {
-            Toast.makeText(context, "Thread created successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                context,
+                "Thread created successfully!",
+                Toast.LENGTH_SHORT)
+                .show()
             navController.navigate(Routes.addStartSpark(createdThread.id)) {
                 launchSingleTop = true
             }
@@ -116,7 +125,9 @@ fun CreateThreadScreen(
 
             if (coverImageUrl.isNotBlank()) {
                 Card(
-                    modifier = Modifier.fillMaxWidth().height(200.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
                     shape = MaterialTheme.shapes.medium
                 ) {
                     AsyncImage(
@@ -126,8 +137,12 @@ fun CreateThreadScreen(
                             .placeholder(R.drawable.placeholder)
                             .error(R.drawable.image_error)
                             .listener(
-                                onSuccess = { _: ImageRequest, _: SuccessResult -> },
-                                onError = { _: ImageRequest, _: ErrorResult -> }
+                                onSuccess = { _: ImageRequest, _: SuccessResult ->
+                                    Log.d("CoilDebug", "Image loaded successfully")
+                                },
+                                onError = { _: ImageRequest, error: ErrorResult ->
+                                    Log.e("CoilDebug", "Image load failed", error.throwable)
+                                }
                             )
                             .build(),
                         contentDescription = "Cover Image Preview",
@@ -154,14 +169,18 @@ fun CreateThreadScreen(
             }
 
             Text("Add Tags")
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OutlinedTextField(
                     value = currentTag,
                     onValueChange = { currentTag = it },
                     label = { Text("Enter Tag") },
                     modifier = Modifier.weight(1f)
                 )
+
                 Spacer(modifier = Modifier.width(8.dp))
+
                 Button(onClick = {
                     if (currentTag.isNotBlank() && !tags.contains(currentTag)) {
                         tags.add(currentTag)
@@ -205,8 +224,15 @@ fun CreateThreadScreen(
                 modifier = Modifier.fillMaxWidth(),
                 enabled = isFormValid && !uiState.loading
             ) {
-                if (uiState.loading) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                else Text("Create Thread")
+                if (uiState.loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(20.dp),
+                        strokeWidth = 2.dp
+                    )
+                }
+                else {
+                    Text("Create Thread")
+                }
             }
         }
     }

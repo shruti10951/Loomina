@@ -13,18 +13,11 @@ class StoryRepository(context: Context) {
     private val apiProvider = RetrofitProvider.getInstance(context)
 
     suspend fun createStory(
-        storyTitle: String,
-        storySynopsis: String,
-        coverImage: String?,
-        genre: List<String>,
-        tags: List<String>
+        request: StoryRequest
     ): ApiResult<StoryResponse> {
         return try {
-            val res = apiProvider.storyApi.createStory(
-                StoryRequest(
-                    storyTitle, storySynopsis, coverImage, genre, tags
-                )
-            )
+            val res = apiProvider.storyApi.createStory(request)
+
             ApiResult.Success(res)
         } catch (e: HttpException) {
             ApiResult.Error(e.response()?.errorBody()?.string() ?: "HTTP ${e.code()}")

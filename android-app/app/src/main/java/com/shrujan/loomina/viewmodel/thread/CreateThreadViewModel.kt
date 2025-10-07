@@ -43,13 +43,7 @@ class CreateThreadViewModel(
         _uiState.value = _uiState.value.copy(loading = true, error = null)
 
         inFlightCreate = viewModelScope.launch {
-            when (val result = repo.createThread(
-                sanitizedRequest.threadTitle,
-                sanitizedRequest.prompt,
-                sanitizedRequest.coverImage,
-                sanitizedRequest.genre,
-                sanitizedRequest.tags
-            )) {
+            when (val result = repo.createThread(sanitizedRequest)) {
                 is ApiResult.Success -> {
                     _uiState.value = CreateThreadUiState(
                         loading = false,

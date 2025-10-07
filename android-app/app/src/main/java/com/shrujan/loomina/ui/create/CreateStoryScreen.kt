@@ -51,6 +51,7 @@ import coil.request.ErrorResult
 import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.shrujan.loomina.R
+import com.shrujan.loomina.data.remote.dto.StoryRequest
 import com.shrujan.loomina.data.repository.StoryRepository
 import com.shrujan.loomina.viewmodel.story.CreateStoryViewModel
 import com.shrujan.loomina.viewmodel.factory.StoryViewModelFactory
@@ -106,6 +107,13 @@ fun CreateStoryScreen(
                 .show()
 
             navController.popBackStack() // go back after success
+            viewModel.resetState()
+            // Reset local form fields if needed
+            storyTitle = ""
+            storySynopsis = ""
+            coverImageUrl = ""
+            selectedGenres.clear()
+            tags.clear()
         }
     }
 
@@ -242,11 +250,13 @@ fun CreateStoryScreen(
             Button(
                 onClick = {
                     viewModel.createStory(
-                        storyTitle = storyTitle,
-                        storySynopsis = storySynopsis,
-                        coverImage = coverImageUrl,
-                        genre = selectedGenres,
-                        tags = tags
+                        StoryRequest(
+                            storyTitle = storyTitle,
+                            storySynopsis = storySynopsis,
+                            coverImage = coverImageUrl,
+                            genre = selectedGenres,
+                            tags = tags
+                        )
                     )
                 },
                 modifier = Modifier.fillMaxWidth(),
