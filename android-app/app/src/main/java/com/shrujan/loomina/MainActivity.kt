@@ -3,46 +3,38 @@ package com.shrujan.loomina
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.core.view.WindowCompat
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.shrujan.loomina.ui.theme.LoominaTheme
+import androidx.navigation.compose.rememberNavController
+import com.shrujan.loomina.theme.LoominaTheme
+import com.shrujan.loomina.ui.components.AppScaffold
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            LoominaTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
 
+        // Let Compose handle the system bars and background
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
+        setContent {
+            LoominaApp()
         }
     }
 }
 
 @Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
+fun LoominaApp() {
     LoominaTheme {
-        Greeting("Android")
+        // Surface ensures proper background according to light/dark theme
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = androidx.compose.material3.MaterialTheme.colorScheme.background
+        ) {
+            val navController = rememberNavController()
+            AppScaffold(navController = navController)
+        }
     }
 }

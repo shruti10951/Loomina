@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Loomina</string>
+    <string name="title_activity_spash">Spash</string>
 </resources>

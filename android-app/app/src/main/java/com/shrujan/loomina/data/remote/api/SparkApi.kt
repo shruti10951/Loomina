@@ -1,0 +1,31 @@
+package com.shrujan.loomina.data.remote.api
+
+import com.shrujan.loomina.data.remote.dto.SparkLikeResponse
+import com.shrujan.loomina.data.remote.dto.SparkRequest
+import com.shrujan.loomina.data.remote.dto.SparkResponse
+import retrofit2.http.Body
+import retrofit2.http.GET
+import retrofit2.http.POST
+import retrofit2.http.Path
+
+interface SparkApi {
+
+    @POST("/api/v1/sparks/")
+    suspend fun createSpark(
+        @Body body: SparkRequest
+    ): SparkResponse
+
+    @GET("api/v1/sparks/{id}")
+    suspend fun getSparkById(
+        @Path("id") sparkId: String
+    ): SparkResponse
+
+    @POST("api/v1/sparks/{id}/like")
+    suspend fun likeSpark(
+        @Path("id") sparkId: String
+    ): SparkLikeResponse
+
+
+}
+
+
