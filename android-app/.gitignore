@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Android Studio
+.idea/
+*.apk
+*.ap_
+*.aab
+*.hprof
