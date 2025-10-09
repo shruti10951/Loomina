@@ -42,5 +42,28 @@ class StoryViewModel (
     }
 
 
+    fun getStoryById(storyId: String) {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(
+                loading = true,
+                error = null
+            )
+            when (val result = storyRepository.getStoryById(storyId)) {
+                is ApiResult.Success -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        currentStory = result.data,
+                        error = null
+                    )
+                }
+                is ApiResult.Error -> {
+                    _uiState.value = _uiState.value.copy(
+                        loading = false,
+                        error = result.message
+                    )
+                }
+            }
+        }
+    }
 
 }

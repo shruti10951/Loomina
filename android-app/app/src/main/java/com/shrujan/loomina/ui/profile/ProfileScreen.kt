@@ -100,8 +100,8 @@ fun ProfileScreen(
                                 ProfileThreadsSection(
                                     threads = threadState.myThreads,
                                     error = threadState.error
-                                ) { thread ->
-                                    navController.navigate(Routes.showThreadDetails(thread.id))
+                                ) {
+                                    thread -> navController.navigate(Routes.showThreadDetails(thread.id))
                                 }
                             }
                         } else {
@@ -112,7 +112,7 @@ fun ProfileScreen(
                                     stories = storyState.myStories,
                                     error = storyState.error
                                 ) {
-                                    // TODO: navigate to story detail
+                                    story -> navController.navigate(Routes.showStoryDetails(story.id))
                                 }
                             }
 

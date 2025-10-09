@@ -49,6 +49,7 @@ async def create_story(
         },
         numberOfLikes=story.numberOfLikes,
         numberOfComments=story.numberOfComments,
+        numberOfChapters=story.numberOfChapters,
         likedBy=story.likedBy,
         coverImage=story.coverImage,
         genre=story.genre,
@@ -77,6 +78,7 @@ async def get_my_stories(current_user: User = Depends(get_current_user)):
                 },
                 numberOfLikes=story.numberOfLikes,
                 numberOfComments=story.numberOfComments,
+                numberOfChapters=story.numberOfChapters,
                 likedBy=story.likedBy,
                 coverImage=story.coverImage,
                 genre=story.genre,
@@ -86,4 +88,48 @@ async def get_my_stories(current_user: User = Depends(get_current_user)):
             )
         )
     return results
+
+# ---------------------------
+# Get Story by ID
+# ---------------------------
+@router.get('/{story_id}', response_model=StoryResponseSchema)
+async def get_story_by_id(story_id: str, current_user: User = Depends(get_current_user)):
+    try:
+        story_obj_id = PydanticObjectId(story_id)
+    except Exception:
+        raise HTTPException(status_code=400, detail="Invalid story ID format")
+    
+    story = await Story.get(story_obj_id)
+    if not story:
+        raise HTTPException(status_code=404, detail="Story not found")
+    
+    # Fetch user info for the story creator
+    story_user = await User.get(story.userId)
+    if not story_user:
+        raise HTTPException(status_code=404, detail="Story creator not found")
+    
+    liked_by_current_user = str(current_user.id) in story.likedBy
+
+    return StoryResponseSchema(
+        _id= str(story.id),
+        storyTitle= story.storyTitle,
+        storySynopsis=story.storySynopsis,
+        creationTime= story.creationTime,
+        user={
+            "_id": str(story_user.id),
+            "username": story_user.username,
+            "userProfileImage": story_user.userProfileImage,
+        },
+        numberOfLikes= story.numberOfLikes,
+        numberOfComments= story.numberOfComments,
+        numberOfChapters= story.numberOfChapters,
+        likedBy= story.likedBy,
+        likedByCurrentUser= liked_by_current_user,
+        coverImage= story.coverImage,
+        genre= story.genre,
+        tags= story.tags,
+        isCompleted= story.isCompleted,
+        reportCount= story.reportCount
+    )
+
 

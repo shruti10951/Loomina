@@ -37,4 +37,13 @@ class StoryRepository(context: Context) {
         }
     }
 
+    suspend fun getStoryById(storyId: String): ApiResult<StoryResponse> {
+        return try {
+            val response = apiProvider.storyApi.getStoryById(storyId)
+            ApiResult.Success(response)
+        } catch (e: Exception) {
+            ApiResult.Error(e.message ?: "Unknown error")
+        }
+    }
+
 }

@@ -27,17 +27,28 @@ class UpdateStorySchema(BaseModel):
 # For returing story data in response 
 class StoryResponseSchema(BaseModel):
     id: str = Field(..., alias="_id")
+
     storyTitle: str
     storySynopsis: str
+
     creationTime: datetime
+
     user: MinimalUserSchema
+
     numberOfLikes: int
     numberOfComments: int
+    numberOfChapters: int
     likedBy: List[str]
+
+    likedByCurrentUser: bool = False
+
     coverImage: Optional[str] = None
+
     genre: List[str]
     tags: List[str]
+
     isCompleted: bool
+    
     reportCount: int
 
     class Config:
@@ -57,3 +68,5 @@ class MinimalStorySchema(BaseModel):
     class Config:
         orm_mode = True
         allow_population_by_field_name = True
+
+

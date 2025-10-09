@@ -12,6 +12,8 @@ class Story(Document):
 
     numberOfLikes: int = 0
     numberOfComments: int = 0
+    numberOfChapters: int = 0 
+    
     likedBy: List[str] = []
     
     storySynopsis: str

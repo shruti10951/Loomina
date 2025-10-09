@@ -17,6 +17,7 @@ import com.shrujan.loomina.ui.library.LibraryScreen
 import com.shrujan.loomina.ui.profile.ProfileScreen
 import com.shrujan.loomina.ui.spark.AddStartSparkScreen
 import com.shrujan.loomina.ui.spark.ExtendSparksScreen
+import com.shrujan.loomina.ui.story.StoryDetailsScreen
 import com.shrujan.loomina.ui.thread.ThreadDetailsScreen
 import com.shrujan.loomina.ui.welcome.SplashScreen
 import com.shrujan.loomina.ui.welcome.WelcomeScreen
@@ -81,7 +82,15 @@ fun AppNavGraph(navController: NavHostController, innerPadding: PaddingValues) {
                     innerPadding = innerPadding,
                     threadId = threadId
                 )
+            }
 
+            composable(Routes.STORY_DETAILS) { backStackEntry ->
+                val storyId = backStackEntry.arguments?.getString("storyId") ?: ""
+                StoryDetailsScreen(
+                    navController = navController,
+                    innerPadding = innerPadding,
+                    storyId = storyId
+                )
             }
 
 

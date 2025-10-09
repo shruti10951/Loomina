@@ -26,6 +26,9 @@ object Routes {
     const val ADD_START_SPARK = "add-spark/{threadId}"
     fun addStartSpark(threadId: String) = "add-spark/$threadId"
 
+    const val STORY_DETAILS = "story-details/{storyId}"
+    fun showStoryDetails(storyId: String) = "story-details/$storyId"
+
 
 }
 
