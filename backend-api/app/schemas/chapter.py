@@ -40,6 +40,8 @@ class ChapterResponseSchema(BaseModel):
     numberOfComments: int
     likedBy: List[str]
 
+    likedByCurrentUser: bool = False
+
     reportCount: int
     isReported: bool
     isDeleted: bool
@@ -56,6 +58,7 @@ class MinimalChapterSchema(BaseModel):
     id: str = Field(..., alias="_id")
     chapterTitle: str
     sequenceNumber: int
+    creationTime: datetime
 
     class Config:
         orm_mode = True

@@ -3,7 +3,12 @@ from beanie import PydanticObjectId
 
 
 from app.schemas.spark import CreateSparkSchema, SparkResponseSchema, SparkLikeResponseSchema
-from app.services.spark_service import validate_and_create_spark, toggle_like_spark
+from app.services.spark_service import (
+    validate_and_create_spark,
+    build_spark_response,
+    get_spark_by_id_service,
+    toggle_like_spark
+)
 
 
 from app.models.spark import Spark
@@ -32,28 +37,7 @@ async def create_spark(
         isSensitive=spark_data.isSensitive or False
     )
 
-    return SparkResponseSchema(
-        _id=str(spark.id),
-        threadId=str(spark.threadId),
-        user={
-            "_id": str(current_user.id),
-            "username": current_user.username,
-            "userProfileImage": current_user.userProfileImage,
-        },
-        sparkText=spark.sparkText,
-        creationTime=spark.creationTime,
-        numberOfLikes=spark.numberOfLikes,
-        numberOfComments=spark.numberOfComments,
-        likedBy=spark.likedBy,
-        previousSparkId=spark.previousSparkId,
-        isStart=spark.isStart,
-        isReported=spark.isReported,
-        isDeleted=spark.isDeleted,
-        isSensitive=spark.isSensitive,
-        isEdited=spark.isEdited,
-        reportCount=spark.reportCount,
-        likedByCurrentUser=False
-    )
+    return await build_spark_response(spark, current_user)
 
 
 
@@ -62,44 +46,7 @@ async def create_spark(
 # ---------------------------
 @router.get('/{spark_id}', response_model=SparkResponseSchema)
 async def get_spark_by_id(spark_id: str, current_user: User = Depends(get_current_user)):
-    try:
-        spark_obj_id = PydanticObjectId(spark_id)
-    except Exception:
-        raise HTTPException(status_code=400, detail="Invalid spark ID format")
-    
-    spark = await Spark.get(spark_obj_id)
-    if not spark:
-        raise HTTPException(status_code=404, detail="Spark not found")
-    
-    # Fetch user info for the spark creator
-    spark_user = await User.get(spark.userId)
-    if not spark_user:
-        raise HTTPException(status_code=404, detail="Spark creator not found")
-    
-    liked_by_current_user = str(current_user.id) in spark.likedBy
-    
-    return SparkResponseSchema(
-    _id=str(spark.id),
-    threadId=str(spark.threadId),
-    user={
-        "_id": str(spark_user.id),
-        "username": spark_user.username,
-        "userProfileImage": spark_user.userProfileImage,
-    },
-    sparkText=spark.sparkText,
-    creationTime=spark.creationTime,
-    numberOfLikes=spark.numberOfLikes,
-    numberOfComments=spark.numberOfComments,
-    likedBy=spark.likedBy,
-    previousSparkId=spark.previousSparkId,
-    isStart=spark.isStart,
-    isReported=spark.isReported,
-    isDeleted=spark.isDeleted,
-    isSensitive=spark.isSensitive,
-    isEdited=spark.isEdited,
-    reportCount=spark.reportCount,
-    likedByCurrentUser=liked_by_current_user
-)
+    return await get_spark_by_id_service(spark_id, current_user)
 
 
 @router.post('/{spark_id}/like', response_model=SparkLikeResponseSchema)
